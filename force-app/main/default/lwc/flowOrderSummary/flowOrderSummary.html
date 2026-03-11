@@ -1,0 +1,96 @@
+<template>
+    <div class="main-container">
+        <!-- <lightning-card title="Order Summary"> -->
+        <div class="summary-title">
+            <h1>Order Summary</h1>
+        </div>
+
+            <!-- Configuration Overview -->
+            <div class="section-block">
+                <div class="section-header">Configuration Overview</div>
+
+                <div class="overview-container">
+                    <div class="overview-box">
+                        <div class="count">{totalGateways}</div>
+                        <div class="label">Gateway Units</div>
+                    </div>
+
+                    <div class="overview-box">
+                        <div class="count">{totalSwitchunits}</div>
+                        <div class="label">Switch Units</div>
+                    </div>
+
+                    <div class="overview-box">
+                        <div class="count">{totalAccessPoints}</div>
+                        <div class="label">Access Points</div>
+                    </div>
+
+                    <div class="overview-box">
+                        <div class="count">{totalUnits}</div>
+                        <div class="label">Total Items</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Products -->
+            <div class="section-block">
+                <div class="section-header">Selected Products & Services</div>
+
+                <template for:each={sections} for:item="section">
+                    <div key={section.key} class="category-block">
+
+                        <div class="category-title">{section.label}</div>
+
+                        <template for:each={section.items} for:item="item">
+                            <div key={item.id} class="product-row">
+
+                                <div class="left-side">
+                                    <div class="product-title">{item.name}</div>
+
+                                    <div class="product-sub">
+                                        Qty {item.qtyDisplay}
+                                    </div>
+
+                                    <template if:true={item.childFee}>
+                                        <div class="activation-fee">
+                                            {item.childFee.name} - ${item.childFee.price}
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="right-side">
+                                    <div class="product-price">
+                                        ${item.displayPrice} each
+                                    </div>
+                                </div>
+
+                            </div>
+                        </template>
+
+                    </div>
+                </template>
+            </div>
+
+            <!-- Pricing Summary -->
+            <div class="section-block pricing-block">
+                <div class="section-header">Pricing Summary</div>
+
+                <div class="pricing-row">
+                    <span>One-Time Setup & Hardware</span>
+                    <span>${oneTimeTotal}</span>
+                </div>
+
+                <div class="pricing-row">
+                    <span>MRC</span>
+                    <span>${monthlyTotal}</span>
+                </div>
+
+                <div class="pricing-row total">
+                    <span>Total Investment</span>
+                    <span>${grandTotal}</span>
+                </div>
+            </div>
+
+        <!-- </lightning-card> -->
+    </div>
+</template>

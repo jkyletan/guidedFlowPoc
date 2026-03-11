@@ -1,0 +1,203 @@
+.miniCart {
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background: #fafafa;
+}
+
+.miniCartTitle {
+    margin-bottom: 0.25rem;
+}
+
+.miniCartList {
+    list-style: disc;
+    margin-left: 1.25rem;
+    font-size: 0.875rem;
+}
+
+.miniCartEmpty {
+    color: #5c5c5c;
+    font-size: 0.875rem;
+}
+
+.miniCartRows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.miniCartRow {
+    white-space: normal;
+}
+
+/* BASKET */
+.basket-card {
+    width: 100%;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #ffffff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.basket-card-items {
+    width: 100%;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    margin: 0.2rem 0;
+}
+
+.basket-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* margin: 0.5rem 0; */
+    height: auto;
+}
+
+
+.basket-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.basket-count {
+    font-size: 0.875rem;
+    color: #6b6d70;
+    margin: 0.25rem 0 1rem;
+}
+
+.basket-empty {
+    text-align: center;
+    color: #6b6d70;
+    margin-top: 1.5rem;
+}
+
+.basket-text {
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.basket-subtext {
+    font-size: 0.75rem;
+}
+
+/* BASKET – SELECTED LOCATION */
+.basket-location {
+    /* background: #f4f0ff; */
+    background: #f0f6ff;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #e5e5e5;
+}
+
+.basket-location-label {
+    font-size: 0.75rem;
+    color: #6b6d70;
+    margin-bottom: 0.25rem;
+}
+
+.basket-location-value {
+    font-weight: 600;
+}
+
+.basket-title {
+    font-size: 1.2rem;
+}
+
+/* Left half: name under price */
+.basket-left {
+    display: flex;
+    flex-direction: column; /* stack vertically */
+    align-items: flex-start; /* align to left edge */
+    gap: 4px; /* spacing between name and price */
+}
+
+/* Right half: quantity */
+.basket-right {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    padding-left: 16px;
+}
+
+.basket-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    border-top: 0.1rem solid gainsboro;
+    padding: 5px;
+}
+
+.basket-MRC {
+    display: flex;
+    justify-content: space-between;
+    /* margin-top: 16px; */
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    /* border-top: 0.1rem solid gainsboro; */
+    padding: 5px;
+}
+
+.basket-total-label {
+    text-align: left;
+}
+
+.basket-total-value {
+    text-align: right;
+    font-weight: 200;
+    margin-top: auto;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin-bottom: 4px;
+}
+
+.product-price {
+    font-size: 14px;
+    color: #444;
+}
+
+.per-unit {
+    font-weight: 300;
+    color: #666;
+}
+
+.child-product {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #555;
+}
+
+.child-price {
+    margin-left: 8px;
+    font-weight: 500;
+}
+
+.qty-badge {
+    background: #ffffff;
+    border-radius: 50px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 32px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}

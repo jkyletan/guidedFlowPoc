@@ -1,0 +1,36 @@
+<template>
+    <lightning-card>
+        <h2 class="title">Service Location</h2>
+        <p class="subtitle">
+            Choose one of the following available service locations to continue with your configuration.
+        </p>
+        <div class="container">
+
+            <template if:true={locations}>
+                <template for:each={locations} for:item="loc">
+                    <div key={loc.Id} class={loc.cardClass} data-id={loc.Id} onclick={handleSelect}>
+
+                        <div class="title-row">
+                            <input type="radio"
+                                data-id={loc.Id}
+                                checked={loc.selected}
+                                class="radio-btn"
+                            />
+                            <div class="location-name">
+                                {loc.Name}
+                            </div>
+                        </div>
+
+                        <div class="location-details">
+                            <span>{loc.ServiceCity}</span>
+                            <span if:true={loc.ServiceState}> , {loc.ServiceState}</span>
+                            <span> {loc.ServicePostalCode}</span>
+                        </div>
+
+                    </div>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

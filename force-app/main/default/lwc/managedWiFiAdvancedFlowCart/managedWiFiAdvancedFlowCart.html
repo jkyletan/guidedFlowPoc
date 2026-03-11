@@ -1,0 +1,95 @@
+<template>
+    <div class="basket-card">
+        <div class="basket-header">
+            <lightning-icon icon-name="utility:cart" size="small"></lightning-icon>
+            <span class="basket-title">Basket</span>
+        </div>
+
+        <p class="basket-count">{itemsCount} items</p>
+
+        <!-- <template for:each={ServiceLocationDetails} for:item="location">
+            <div key={location.key} class="basket-location" style="display:flex; justify-content:space-between; background-color:#f0f6ff">
+                <div class="basket-left">
+                    <div style="color:grey">Service Location</div>
+                    <div class="product-name">{location.name}</div>
+                </div>
+            </div>
+        </template> -->
+        <template if:true={selectedServiceLocation}>
+            <div class="basket-location" style="display:flex; justify-content:space-between; background-color:#f0f6ff">
+                <div class="basket-left">
+                    <div style="color:grey">Service Location</div>
+                    <div class="product-name">{selectedServiceLocation.Name}</div>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Selected Service Location -->
+        <template for:each={cartItems} for:item="item">
+            <div key={item.key} class="basket-card-items">
+                <div class="basket-content">
+
+                    <!-- LEFT SECTION -->
+                    <div class="basket-left">
+                        <div class="product-name">
+                            {item.productName}
+                        </div>
+
+                        <template lwc:if={item.price}>
+                            <div class="product-price">
+                                ${item.price} <span class="per-unit">each</span>
+                            </div>
+                        </template>
+
+                        <template lwc:if={item.ChildProductName}>
+                            <div class="child-product">
+                                <span class="child-name">{item.ChildProductName}</span>
+                                <span class="child-price">${item.ChildProductPrice}</span>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- RIGHT SECTION -->
+                    <div class="basket-right">
+                        <template lwc:if={item.qty}>
+                            <div class="qty-badge">
+                                {item.qty}
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+        <!-- Empty basket -->
+        <template if:false={hasItems}>
+            <div class="basket-empty">
+                <lightning-icon icon-name="utility:cart" size="medium"></lightning-icon>
+                <p class="basket-text">Your basket is empty</p>
+                <p class="basket-subtext">Add some items to get started</p>
+            </div>
+        </template>
+
+        <template if:true={hasOneTimeTotal}>
+            <div class="basket-total">
+                <span class="basket-total-value">One-time charges</span>
+                <span class="basket-total-label">{formattedOneTimeTotal}</span>
+            </div>
+        </template>
+
+        <template if:true={hasMonthlyTotal}>
+            <div class="basket-MRC">
+                <span class="basket-total-value">MRC</span>
+                <span class="basket-total-label">{formattedMRC}</span>
+            </div>
+        </template>
+
+        <template if:true={hasMonthlyTotal}>
+            <div class="basket-total">
+                <span class="basket-total-label">Total</span>
+                <span class="basket-total-value">{formattedTotal}</span>
+            </div>
+        </template>
+    </div>
+</template>

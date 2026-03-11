@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <!--
+                INPUT PROPERTIES
+                Each property receives the matching Data Manager output
+                directly via the flow screen field's inputParameters.
+            -->
+
+            <!-- ── Apex object outputs ─────────────────────────────────── -->
+            <property name="dm_header"
+                type="apex://ProductConfig.Product"
+                label="DM: header"
+                role="inputOnly" />
+
+            <property name="dm_transactionRecord"
+                type="apex://ProductConfig.TransactionRecord"
+                label="DM: transactionRecord"
+                role="inputOnly" />
+
+            <property name="dm_summary"
+                type="apex://ProductConfig.PricingSummary"
+                label="DM: summary"
+                role="inputOnly" />
+
+            <property name="dm_userContext"
+                type="apex://ProductConfig.UserContext"
+                label="DM: userContext"
+                role="inputOnly" />
+
+            <property name="dm_salesTransactionItems"
+                type="apex://ProductConfig.SalesTransactionItem[]"
+                label="DM: salesTransactionItems"
+                role="inputOnly" />
+
+            <property name="dm_optionGroups"
+                type="apex://ProductConfig.OptionGroup[]"
+                label="DM: optionGroups"
+                role="inputOnly" />
+
+            <property name="dm_navigationRoute"
+                type="apex://ProductConfig.NavigationInfo[]"
+                label="DM: navigationRoute"
+                role="inputOnly" />
+
+            <property name="dm_favoriteData"
+                type="String"
+                label="DM: favoriteData"
+                role="inputOnly" />
+
+            <property name="dm_attributeCategories"
+                type="apex://ProductConfig.AttributeCategory[]"
+                label="DM: attributeCategories"
+                role="inputOnly" />
+
+            <property name="dm_eligiblePromotions"
+                type="apex://ProductConfig.Promotion[]"
+                label="DM: eligiblePromotions"
+                role="inputOnly" />
+
+            <property name="dm_contextMetadata"
+                type="String"
+                label="DM: contextMetadata"
+                role="inputOnly" />
+
+            <property name="dm_searchResultOptionId"
+                type="String"
+                label="DM: searchResultOptionId"
+                role="inputOnly" />
+
+            <!-- ── String outputs ──────────────────────────────────────── -->
+            <property name="dm_messages"
+                type="apex://ProductConfig.Message[]"
+                label="DM: messages"
+                role="inputOnly" />
+
+            <property name="dm_currencyCode"
+                type="String"
+                label="DM: currencyCode"
+                role="inputOnly" />
+
+            <property name="dm_layoutMode"
+                type="String"
+                label="DM: layoutMode"
+                role="inputOnly" />
+
+            <property name="dm_tabs"
+                type="apex://ProductConfig.Tab[]"
+                label="DM: tabs"
+                role="inputOnly" />
+
+            <property name="dm_searchInfo"
+                type="apex://ProductConfig.SearchInfo[]"
+                label="DM: searchInfo"
+                role="inputOnly" />
+
+            <property name="dm_headerTitle"
+                type="String"
+                label="DM: headerTitle"
+                role="inputOnly" />
+
+            <property name="dm_rootProductId"
+                type="String"
+                label="DM: rootProductId"
+                role="inputOnly" />
+
+            <property name="dm_currentGroupName"
+                type="String"
+                label="DM: currentGroupName"
+                role="inputOnly" />
+
+            <!-- ── Boolean outputs ─────────────────────────────────────── -->
+            <property name="dm_areMessagesFixed"
+                type="Boolean"
+                label="DM: areMessagesFixed"
+                role="inputOnly" />
+
+            <property name="dm_isInstantPricingToggleEnabled"
+                type="Boolean"
+                label="DM: isInstantPricingToggleEnabled"
+                role="inputOnly" />
+
+            <property name="dm_explainabilityEnabled"
+                type="Boolean"
+                label="DM: explainabilityEnabled"
+                role="inputOnly" />
+
+            <property name="dm_isDesignTime"
+                type="Boolean"
+                label="DM: isDesignTime"
+                role="inputOnly" />
+
+            <property name="dm_showPrices"
+                type="Boolean"
+                label="DM: showPrices"
+                role="inputOnly" />
+
+            <property name="dm_isInstantPricingEnabled"
+                type="Boolean"
+                label="DM: isInstantPricingEnabled"
+                role="inputOnly" />
+
+            <property name="dm_isApiInProgress"
+                type="Boolean"
+                label="DM: isApiInProgress"
+                role="inputOnly" />
+
+            <property name="dm_isNonBlockingEnabled"
+                type="Boolean"
+                label="DM: isNonBlockingEnabled"
+                role="inputOnly" />
+
+            <property name="dm_isPriceRampEnabled"
+                type="Boolean"
+                label="DM: isPriceRampEnabled"
+                role="inputOnly" />
+
+            <property name="dm_isGroupRampEnabled"
+                type="Boolean"
+                label="DM: isGroupRampEnabled"
+                role="inputOnly" />
+
+            <property name="dm_isConfiguratorDisabled"
+                type="Boolean"
+                label="DM: isConfiguratorDisabled"
+                role="inputOnly" />
+
+            <property name="dm_isClassContext"
+                type="Boolean"
+                label="DM: isClassContext"
+                role="inputOnly" />
+
+            <property name="dm_showSummaryTotalSection"
+                type="Boolean"
+                label="DM: showSummaryTotalSection"
+                role="inputOnly" />
+
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,124 @@
+.main-container {
+    padding: 16px;
+    /* background-color: #f4f6f9; */
+    border: 1px solid #e0e5ee;
+    border-radius: 8px;
+    font-family: 'Salesforce Sans';
+}
+
+/* Section Block */
+.section-block {
+    /* background: #f8f9fb; */
+    border: 1px solid #e0e5ee;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+/* Section Header */
+.section-header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #1f2d3d;
+}
+
+/* Overview */
+.overview-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.overview-box {
+    flex: 1;
+    /* background: #eef1f6; */
+    background: #f0f6ff;
+    border-radius: 6px;
+    padding: 14px;
+    text-align: center;
+}
+
+.count {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Category */
+.category-block {
+    margin-bottom: 18px;
+}
+
+.category-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #334155;
+}
+
+/* Product Row */
+.product-row {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.product-sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.activation-fee {
+    font-size: 12px;
+    color: #4b5563;
+    margin-top: 3px;
+}
+
+.product-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Pricing */
+.pricing-block {
+    background: #f8f9fb;
+}
+
+.pricing-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.pricing-row.total {
+    font-weight: 700;
+    font-size: 14px;
+    border-top: 1px solid #d1d5db;
+    padding-top: 8px;
+}
+
+.summary-title {
+    margin-bottom: 1rem;
+    font-family: 'Salesforce Sans';
+    font-weight: bold;
+    font-size: medium;
+}

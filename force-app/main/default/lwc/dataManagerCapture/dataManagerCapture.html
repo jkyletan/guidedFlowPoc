@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="Data Manager Capture" icon-name="utility:connected_apps">
+
+        <div class="slds-var-m-around_small">
+
+            <!-- One row per Data Manager property -->
+            <template for:each={displayRows} for:item="row">
+                <div key={row.key} class="section">
+                    <div class="section-header">
+                        <span class={row.dotClass}></span>
+                        {row.label}
+                    </div>
+                    <pre class="code-block">{row.value}</pre>
+                </div>
+            </template>
+
+        </div>
+
+    </lightning-card>
+</template>
