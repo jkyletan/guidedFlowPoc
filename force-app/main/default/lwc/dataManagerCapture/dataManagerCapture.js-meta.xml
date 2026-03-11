@@ -15,37 +15,37 @@
 
             <!-- ── Apex object outputs ─────────────────────────────────── -->
             <property name="dm_header"
-                type="apex://ProductConfig.Product"
+                type="String"
                 label="DM: header"
                 role="inputOnly" />
 
             <property name="dm_transactionRecord"
-                type="apex://ProductConfig.TransactionRecord"
+                type="String"
                 label="DM: transactionRecord"
                 role="inputOnly" />
 
             <property name="dm_summary"
-                type="apex://ProductConfig.PricingSummary"
+                type="String"
                 label="DM: summary"
                 role="inputOnly" />
 
             <property name="dm_userContext"
-                type="apex://ProductConfig.UserContext"
+                type="String"
                 label="DM: userContext"
                 role="inputOnly" />
 
             <property name="dm_salesTransactionItems"
-                type="apex://ProductConfig.SalesTransactionItem[]"
+                type="String"
                 label="DM: salesTransactionItems"
                 role="inputOnly" />
 
             <property name="dm_optionGroups"
-                type="apex://ProductConfig.OptionGroup[]"
+                type="String"
                 label="DM: optionGroups"
                 role="inputOnly" />
 
             <property name="dm_navigationRoute"
-                type="apex://ProductConfig.NavigationInfo[]"
+                type="String"
                 label="DM: navigationRoute"
                 role="inputOnly" />
 
@@ -55,12 +55,12 @@
                 role="inputOnly" />
 
             <property name="dm_attributeCategories"
-                type="apex://ProductConfig.AttributeCategory[]"
+                type="String"
                 label="DM: attributeCategories"
                 role="inputOnly" />
 
             <property name="dm_eligiblePromotions"
-                type="apex://ProductConfig.Promotion[]"
+                type="String"
                 label="DM: eligiblePromotions"
                 role="inputOnly" />
 
@@ -76,7 +76,7 @@
 
             <!-- ── String outputs ──────────────────────────────────────── -->
             <property name="dm_messages"
-                type="apex://ProductConfig.Message[]"
+                type="String"
                 label="DM: messages"
                 role="inputOnly" />
 
@@ -91,12 +91,12 @@
                 role="inputOnly" />
 
             <property name="dm_tabs"
-                type="apex://ProductConfig.Tab[]"
+                type="String"
                 label="DM: tabs"
                 role="inputOnly" />
 
             <property name="dm_searchInfo"
-                type="apex://ProductConfig.SearchInfo[]"
+                type="String"
                 label="DM: searchInfo"
                 role="inputOnly" />
 

@@ -2,11 +2,6 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>66.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         ASSIGNMENT: Set AddedNode fields from input variables.
-         Only reached when In_AddedNode_Product is not null
-         (see decision Check_AddedNode_Input below).
-         ═══════════════════════════════════════════════════════════════════ -->
     <assignments>
         <name>Set_AddedNode_From_Input</name>
         <label>Set AddedNode From Input</label>
@@ -107,11 +102,6 @@
             <targetReference>Check_Cfg_Input</targetReference>
         </connector>
     </assignments>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         ASSIGNMENT: Set configuratorContext fields from input variables.
-         Only reached when In_Cfg_TransactionId is not null
-         (see decision Check_Cfg_Input below).
-         ═══════════════════════════════════════════════════════════════════ -->
     <assignments>
         <name>Set_Cfg_From_Input</name>
         <label>Set Configurator Context From Input</label>
@@ -163,11 +153,6 @@
             <targetReference>S01_ProductConfiguratorUI</targetReference>
         </connector>
     </assignments>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         DECISION: Is In_AddedNode_Product provided by the caller?
-         YES → Set_AddedNode_From_Input → Check_Cfg_Input
-         NO  → skip straight to Check_Cfg_Input (keep existing AddedNode value)
-         ═══════════════════════════════════════════════════════════════════ -->
     <decisions>
         <name>Check_AddedNode_Input</name>
         <label>Check AddedNode Input Provided?</label>
@@ -193,11 +178,6 @@
             <label>Provided — Set Fields</label>
         </rules>
     </decisions>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         DECISION: Is In_Cfg_TransactionId provided by the caller?
-         YES → Set_Cfg_From_Input → S01_ProductConfiguratorUI
-         NO  → skip straight to S01_ProductConfiguratorUI (keep existing context)
-         ═══════════════════════════════════════════════════════════════════ -->
     <decisions>
         <name>Check_Cfg_Input</name>
         <label>Check Configurator Context Input Provided?</label>
@@ -938,65 +918,10 @@
             <name>S01_DataManagerCapture</name>
             <extensionName>c:dataManagerCapture</extensionName>
             <fieldType>ComponentInstance</fieldType>
-            <!-- ── Apex object outputs ─────────────────────────── -->
-            <inputParameters>
-                <name>dm_header</name>
-                <value>
-                    <elementReference>S01_DataManager.header</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_transactionRecord</name>
-                <value>
-                    <elementReference>S01_DataManager.transactionRecord</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_summary</name>
-                <value>
-                    <elementReference>S01_DataManager.summary</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_userContext</name>
-                <value>
-                    <elementReference>S01_DataManager.userContext</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_salesTransactionItems</name>
-                <value>
-                    <elementReference>S01_DataManager.salesTransactionItems</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_optionGroups</name>
-                <value>
-                    <elementReference>S01_DataManager.optionGroups</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_navigationRoute</name>
-                <value>
-                    <elementReference>S01_DataManager.navigationRoute</elementReference>
-                </value>
-            </inputParameters>
             <inputParameters>
                 <name>dm_favoriteData</name>
                 <value>
                     <elementReference>S01_DataManager.favoriteData</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_attributeCategories</name>
-                <value>
-                    <elementReference>S01_DataManager.attributeCategories</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_eligiblePromotions</name>
-                <value>
-                    <elementReference>S01_DataManager.eligiblePromotions</elementReference>
                 </value>
             </inputParameters>
             <inputParameters>
@@ -1011,13 +936,6 @@
                     <elementReference>S01_DataManager.searchResultOptionId</elementReference>
                 </value>
             </inputParameters>
-            <!-- ── String outputs ──────────────────────────────── -->
-            <inputParameters>
-                <name>dm_messages</name>
-                <value>
-                    <elementReference>S01_DataManager.messages</elementReference>
-                </value>
-            </inputParameters>
             <inputParameters>
                 <name>dm_currencyCode</name>
                 <value>
@@ -1028,18 +946,6 @@
                 <name>dm_layoutMode</name>
                 <value>
                     <elementReference>S01_DataManager.layoutMode</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_tabs</name>
-                <value>
-                    <elementReference>S01_DataManager.tabs</elementReference>
-                </value>
-            </inputParameters>
-            <inputParameters>
-                <name>dm_searchInfo</name>
-                <value>
-                    <elementReference>S01_DataManager.searchInfo</elementReference>
                 </value>
             </inputParameters>
             <inputParameters>
@@ -1060,7 +966,6 @@
                     <elementReference>S01_DataManager.currentGroupName</elementReference>
                 </value>
             </inputParameters>
-            <!-- ── Boolean outputs ─────────────────────────────── -->
             <inputParameters>
                 <name>dm_areMessagesFixed</name>
                 <value>
@@ -1141,7 +1046,6 @@
             </inputParameters>
             <inputsOnNextNavToAssocScrn>ResetValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
-            <storeOutputAutomatically>false</storeOutputAutomatically>
             <styleProperties>
                 <verticalAlignment>
                     <stringValue>top</stringValue>
@@ -1206,33 +1110,94 @@
         <isInput>true</isInput>
         <isOutput>false</isOutput>
     </variables>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         INPUT VARIABLES — AddedNode fields
-         defaultValue = hardcoded test values so the flow works unchanged
-         when no caller passes these in (testing mode).
-         When called from a real context, pass the real values and they
-         will override the defaults.
-         ═══════════════════════════════════════════════════════════════════ -->
     <variables>
-        <name>In_AddedNode_UnitPrice</name>
-        <dataType>Number</dataType>
+        <name>In_AddedNode_BusinessObjectType</name>
+        <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
-        <scale>2</scale>
         <value>
-            <numberValue>30.0</numberValue>
+            <stringValue>QuoteLineItem</stringValue>
         </value>
     </variables>
     <variables>
-        <name>In_AddedNode_SubscriptionTerm</name>
-        <dataType>Number</dataType>
+        <name>In_AddedNode_Id</name>
+        <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
-        <scale>0</scale>
         <value>
-            <numberValue>1.0</numberValue>
+            <stringValue>ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_PricebookEntry</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>01ud5000000Ujz4AAC</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_PricingTermUnit</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>Months</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_Product</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>01td5000004LI9LAAW</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_ProductBasedOn</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>11Bd5000005gs5zEAA</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_ProductCode</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>CCC_FIBER_BROADBAND_BRONZE</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_ProductName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>Fibre Broadband Bronze</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_AddedNode_ProductSellingModel</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>0jPd50000000rAnEAI</stringValue>
         </value>
     </variables>
     <variables>
@@ -1257,129 +1222,35 @@
         </value>
     </variables>
     <variables>
-        <name>In_AddedNode_ProductSellingModel</name>
-        <dataType>String</dataType>
+        <name>In_AddedNode_SubscriptionTerm</name>
+        <dataType>Number</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
+        <scale>0</scale>
         <value>
-            <stringValue>0jPd50000000rAnEAI</stringValue>
+            <numberValue>1.0</numberValue>
         </value>
     </variables>
     <variables>
-        <name>In_AddedNode_ProductName</name>
-        <dataType>String</dataType>
+        <name>In_AddedNode_UnitPrice</name>
+        <dataType>Number</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
+        <scale>2</scale>
         <value>
-            <stringValue>Fibre Broadband Bronze</stringValue>
+            <numberValue>30.0</numberValue>
         </value>
     </variables>
     <variables>
-        <name>In_AddedNode_ProductCode</name>
-        <dataType>String</dataType>
+        <name>In_Cfg_ExplainabilityEnabled</name>
+        <dataType>Boolean</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
         <value>
-            <stringValue>CCC_FIBER_BROADBAND_BRONZE</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_AddedNode_ProductBasedOn</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>11Bd5000005gs5zEAA</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <!-- SENTINEL: if this is provided, all AddedNode inputs are assumed provided -->
-        <name>In_AddedNode_Product</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>01td5000004LI9LAAW</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_AddedNode_PricingTermUnit</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>Months</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_AddedNode_PricebookEntry</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>01ud5000000Ujz4AAC</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_AddedNode_Id</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_AddedNode_BusinessObjectType</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>QuoteLineItem</stringValue>
-        </value>
-    </variables>
-    <!-- ═══════════════════════════════════════════════════════════════════
-         INPUT VARIABLES — configuratorContext fields
-         defaultValue = hardcoded test values.
-         ═══════════════════════════════════════════════════════════════════ -->
-    <variables>
-        <name>In_Cfg_TransactionLineId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <!-- SENTINEL: if this is provided, all configuratorContext inputs are assumed provided -->
-        <name>In_Cfg_TransactionId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>0Q0d50000012YoDCAU</stringValue>
-        </value>
-    </variables>
-    <variables>
-        <name>In_Cfg_ParentName</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <value>
-            <stringValue>Quote</stringValue>
+            <booleanValue>false</booleanValue>
         </value>
     </variables>
     <variables>
@@ -1393,13 +1264,33 @@
         </value>
     </variables>
     <variables>
-        <name>In_Cfg_ExplainabilityEnabled</name>
-        <dataType>Boolean</dataType>
+        <name>In_Cfg_ParentName</name>
+        <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
         <value>
-            <booleanValue>false</booleanValue>
+            <stringValue>Quote</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_Cfg_TransactionId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>0Q0d50000012YoDCAU</stringValue>
+        </value>
+    </variables>
+    <variables>
+        <name>In_Cfg_TransactionLineId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a</stringValue>
         </value>
     </variables>
 </Flow>

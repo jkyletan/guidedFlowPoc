@@ -1,6 +1,14 @@
 <template>
     <lightning-card title="Data Manager Capture" icon-name="utility:connected_apps">
 
+        <div slot="actions">
+            <lightning-button
+                label="← Back to Product List"
+                variant="neutral"
+                onclick={handleBack}>
+            </lightning-button>
+        </div>
+
         <div class="slds-var-m-around_small">
 
             <!-- One row per Data Manager property -->

@@ -21,11 +21,24 @@ public with sharing class categoryAndProductController {
         List<CategoryAndProduct.Category> cats =
             CategoryAndProduct.getAllCategoryHierarchy(rootCategoryId);
 
+        System.debug('═══ getCategoriesWithProducts — category count: ' + cats.size());
+
         for(CategoryAndProduct.Category c : cats){
+
+            System.debug('  Category: id=' + c.id + ' name=' + c.name
+                + ' productIds=' + c.productIds
+                + ' productIds.size=' + (c.productIds != null ? c.productIds.size() : -1));
 
             if(c.productIds == null) continue;
 
-            for(Id pid : c.productIds){
+            for(Integer i = 0; i < c.productIds.size(); i++){
+                Id pid = c.productIds[i];
+                System.debug('    productIds[' + i + '] = ' + pid + ' (null? ' + (pid == null) + ')');
+
+                if(pid == null){
+                    System.debug('    ⚠ Skipping null productId at index ' + i + ' in category ' + c.name);
+                    continue;
+                }
 
                 CategoryProductRow r = new CategoryProductRow();
                 r.categoryId = c.id;
@@ -34,6 +47,12 @@ public with sharing class categoryAndProductController {
 
                 rows.add(r);
             }
+        }
+
+        System.debug('═══ getCategoriesWithProducts — final row count: ' + rows.size());
+        for(Integer i = 0; i < rows.size(); i++){
+            System.debug('  row[' + i + '] categoryName=' + rows[i].categoryName
+                + ' productId=' + rows[i].productId);
         }
 
         return rows;

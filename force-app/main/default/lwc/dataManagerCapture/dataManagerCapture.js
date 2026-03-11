@@ -143,4 +143,14 @@ export default class DataManagerCapture extends LightningElement {
             return String(value);
         }
     }
+
+    // ─── Back button ─────────────────────────────────────────────────────────
+    /**
+     * Fires a bubbling, composed custom event so the parent component
+     * (categoryAndProductDuplicate) can listen via ondmcaptureback and
+     * navigate back to the product list.
+     */
+    handleBack() {
+        this.dispatchEvent(new CustomEvent('dmcaptureback', { bubbles: true, composed: true }));
+    }
 }

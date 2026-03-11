@@ -146,8 +146,8 @@
                 </lightning-card>
                 <!-- FLOW MODAL -->
                 <template if:true={showFlow}>
-                    <section role="dialog" class="slds-modal slds-fade-in-open">
-                        <div class="slds-modal__container">
+                    <section role="dialog" class="slds-modal slds-fade-in-open slds-modal_large flow-modal">
+                        <div class="slds-modal__container flow-modal__container">
 
                             <!-- HEADER -->
                             <header class="slds-modal__header">
@@ -161,10 +161,12 @@
                             </header>
 
                             <!-- BODY -->
-                            <div class="slds-modal__content slds-p-around_medium">
+                            <div class="slds-modal__content slds-p-around_medium flow-modal__body">
 
-                                <lightning-flow flow-api-name="QOCAL_Product_Configurator_Flow"
-                                    flow-input-variables={flowInputVariables} onstatuschange={handleFlowStatusChange}>
+                                <lightning-flow flow-api-name="Custom_Product_Configurator_Flow"
+                                    flow-input-variables={flowInputVariables}
+                                    onstatuschange={handleFlowStatusChange}
+                                    ondmcaptureback={handleDmCaptureBack}>
                                 </lightning-flow>
 
                             </div>
@@ -173,6 +175,33 @@
                     </section>
 
                     <div class="slds-backdrop slds-backdrop_open"></div>
+                </template>
+
+                <!-- ── Captured Data Manager Variables Panel ─────────────── -->
+                <template if:true={showCapturedData}>
+                    <lightning-card title="Captured Data Manager Variables" icon-name="utility:connected_apps"
+                        class="slds-m-top_medium">
+                        <div class="slds-p-around_small">
+                            <p class="slds-text-body_small slds-m-bottom_small">
+                                These are the output variables returned by the flow after it finished.
+                                If the list is empty, ensure the relevant flow variables have
+                                <code>isOutput=true</code>.
+                            </p>
+
+                            <template if:true={capturedDmRows}>
+                                <template for:each={capturedDmRows} for:item="row">
+                                    <div key={row.key} class="dm-capture-row">
+                                        <div class="dm-capture-key">{row.key}</div>
+                                        <pre class="dm-capture-value">{row.value}</pre>
+                                    </div>
+                                </template>
+                            </template>
+
+                            <template if:false={capturedDmRows.length}>
+                                <p class="slds-text-color_weak">No output variables captured from the flow.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
                 </template>
             </div>
             <div class="slds-col slds-size_3-of-12">

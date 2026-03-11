@@ -76,3 +76,76 @@
 .step-dot.active {
     background: #1b96ff;
 }
+
+/* ── Flow Modal — maximised ──────────────────────────────────────────────── */
+
+/* Push the modal section itself to full viewport size */
+.flow-modal {
+    padding: 0 !important;
+}
+
+/* Make the container stretch edge-to-edge and top-to-bottom */
+.flow-modal__container {
+    width:      96vw  !important;
+    max-width:  96vw  !important;
+    height:     94vh  !important;
+    max-height: 94vh  !important;
+    /* vertically centre within the viewport */
+    top:    3vh !important;
+    bottom: 3vh !important;
+    /* horizontally centre */
+    left:   50% !important;
+    transform: translateX(-50%) !important;
+    position: fixed !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* override the default SLDS positioning that clips height */
+    margin: 0 !important;
+}
+
+/* The body section must fill all remaining height after the header */
+.flow-modal__body {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    /* remove SLDS max-height that restricts the scroll area */
+    max-height: none !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Let the flow itself fill the body */
+.flow-modal__body lightning-flow {
+    display: block;
+    height: 100%;
+}
+
+/* ── Captured Data Manager Variables Panel ───────────────────────────── */
+.dm-capture-row {
+    border: 1px solid #e0e5ee;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+.dm-capture-key {
+    background-color: #f3f3f3;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: #3e3e3c;
+    border-bottom: 1px solid #e0e5ee;
+}
+
+.dm-capture-value {
+    background: #1b1b1b;
+    color: #c9d1d9;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 0.6rem 0.75rem;
+    margin: 0;
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
