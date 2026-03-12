@@ -1,4 +1,7 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, track, api, wire } from 'lwc';
+import { subscribe, MessageContext } from 'lightning/messageService';
+import PRODUCT_CONFIGURATOR_RESULT
+    from '@salesforce/messageChannel/ProductConfiguratorResult__c';
 import getCategoriesWithProducts
     from '@salesforce/apex/categoryAndProductController.getCategoriesWithProducts';
 import getProductDetails
@@ -27,6 +30,16 @@ export default class CpqConfigurator extends LightningElement {
     @track capturedDmData = null;
     @track showCapturedData = false;
 
+    // ── LMS: Product Configurator Result subscription ────────────────────────
+    @wire(MessageContext)
+    messageContext;
+
+    _lmsSubscription = null;
+
+    /** Data received via LMS from customProductConfiguratorFooter */
+    @track lmsReceivedData = null;
+    @track showLmsReceivedData = false;
+
     get totalSteps() { return this.categories?.length || 0; }
     get currentCategory() {
         if (!this.categories || this.categories.length === 0) return null;
@@ -37,123 +50,99 @@ export default class CpqConfigurator extends LightningElement {
     get hasProducts() { return this.products && this.products.length > 0; }
 
     connectedCallback() {
+        this._subscribeToLms();
         this.loadCategoryProducts();
+    }
+
+    // ── LMS subscription ─────────────────────────────────────────────────────
+    _subscribeToLms() {
+        if (this._lmsSubscription) return; // already subscribed
+        this._lmsSubscription = subscribe(
+            this.messageContext,
+            PRODUCT_CONFIGURATOR_RESULT,
+            (message) => this._handleLmsMessage(message)
+        );
+        console.log('[categoryAndProductDuplicate] Subscribed to ProductConfiguratorResult LMS channel');
+    }
+
+    _handleLmsMessage(message) {
+        console.log('[categoryAndProductDuplicate] LMS message received:', JSON.stringify(message));
+
+        // Store the received product configuration data for future use
+        this.lmsReceivedData = {
+            salesTransactionItems: message.salesTransactionItems,
+            transactionRecord:     message.transactionRecord,
+            attributeCategories:   message.attributeCategories,
+            optionGroups:          message.optionGroups,
+            summary:               message.summary
+        };
+        this.showLmsReceivedData = true;
+
+        // Close the flow modal — return user to the category/product view
+        this.showFlow = false;
+    }
+
+    /** Converts lmsReceivedData into displayable rows for the debug panel */
+    get lmsReceivedRows() {
+        if (!this.lmsReceivedData) return [];
+        return Object.keys(this.lmsReceivedData).map(key => ({
+            key,
+            value: this._formatDmValue(this.lmsReceivedData[key])
+        }));
     }
     /* ============================
        FLOW INPUT VARIABLES
-       Maps the selected product's data onto the
-       Custom_Product_Configurator_Flow input variables.
-
-       Variables that are KNOWN are mapped directly from this.selectedProduct.
-       Variables that are UNKNOWN are logged so you can identify the correct
-       values and complete the mapping later.
+       Builds the configuratorContext Apex-defined variable directly and
+       passes it as a single input to the flow.  This eliminates the old
+       In_AddedNode_* / In_Cfg_* flat primitives and the two Decision +
+       two Assignment nodes in the flow that reassembled them.
     ============================ */
     get flowInputVariables() {
         const p = this.selectedProduct || {};
 
         console.log('[categoryAndProductDuplicate] flowInputVariables — selectedProduct:', JSON.stringify(p));
 
-        // ── Test/fallback values taken directly from the flow's own defaults ──
-        // Replace each TEST_* constant with a real dynamic value once available.
-        const TEST_TRANSACTION_ID      = '0Q0d50000012YoDCAU';        // TODO: real Quote/Order recordId
-        const TEST_PRODUCT_BASED_ON    = '11Bd5000005gs5zEAA';        // TODO: productClassification.id from Apex
-        const TEST_BUSINESS_OBJECT_TYPE = 'QuoteLineItem';            // TODO: derive from parent object type
+        // ── Test/fallback values ─────────────────────────────────────────
+        const TEST_TRANSACTION_ID       = '0Q0d50000012YoDCAU';        // TODO: real Quote/Order recordId
+        const TEST_PRODUCT_BASED_ON     = '11Bd5000005gs5zEAA';        // TODO: productClassification.id from Apex
+        const TEST_BUSINESS_OBJECT_TYPE = 'QuoteLineItem';             // TODO: derive from parent object type
 
         // ref_ id is generated fresh each time so the flow sees a unique line ref
         const refId = 'ref_' + this._generateUUID();
 
+        // Build the configuratorContext object matching ProductConfig__ConfiguratorContext
+        const configuratorContext = {
+            transactionId:        TEST_TRANSACTION_ID,
+            transactionLineId:    refId,
+            parentName:           'Quote',
+            origin:               'Quote',
+            explainabilityEnabled: false,
+            addedNodes: [
+                {
+                    product:              p.productId             || '01td5000004LI9LAAW',
+                    productName:          p.productName           || 'Fibre Broadband Bronze',
+                    productCode:          p.productCode           || 'CCC_FIBER_BROADBAND_BRONZE',
+                    unitPrice:            p.price != null ? p.price : 30.0,
+                    quantity:             1,
+                    pricebookEntry:       p.pricebookEntryId      || '01ud5000000Ujz4AAC',
+                    productSellingModel:  p.productSellingModelId || '0jPd50000000rAnEAI',
+                    sellingModelType:     p.sellingModelType      || 'Evergreen',
+                    pricingTermUnit:      p.pricingTermUnit       || 'Months',
+                    subscriptionTerm:     p.subscriptionTerm      || 1,
+                    id:                   refId,
+                    productBasedOn:       TEST_PRODUCT_BASED_ON,
+                    businessObjectType:   TEST_BUSINESS_OBJECT_TYPE
+                }
+            ]
+        };
+
+        console.log('[categoryAndProductDuplicate] configuratorContext:', JSON.stringify(configuratorContext));
+
         return [
-            // ── AddedNode inputs ──────────────────────────────────────────
             {
-                name: 'In_AddedNode_Product',
-                type: 'String',
-                value: p.productId || '01td5000004LI9LAAW'             // TEST: Bronze product Id
-            },
-            {
-                name: 'In_AddedNode_ProductName',
-                type: 'String',
-                value: p.productName || 'Fibre Broadband Bronze'       // TEST
-            },
-            {
-                name: 'In_AddedNode_ProductCode',
-                type: 'String',
-                value: p.productCode || 'CCC_FIBER_BROADBAND_BRONZE'   // TEST
-            },
-            {
-                name: 'In_AddedNode_UnitPrice',
-                type: 'Number',
-                value: p.price != null ? p.price : 30.0               // TEST
-            },
-            {
-                name: 'In_AddedNode_Quantity',
-                type: 'Number',
-                value: 1
-            },
-            {
-                name: 'In_AddedNode_PricebookEntry',
-                type: 'String',
-                value: p.pricebookEntryId || '01ud5000000Ujz4AAC'      // TEST: Bronze pricebook entry
-            },
-            {
-                name: 'In_AddedNode_ProductSellingModel',
-                type: 'String',
-                value: p.productSellingModelId || '0jPd50000000rAnEAI' // TEST: Evergreen - Monthly
-            },
-            {
-                name: 'In_AddedNode_SellingModelType',
-                type: 'String',
-                value: p.sellingModelType || 'Evergreen'               // TEST
-            },
-            {
-                name: 'In_AddedNode_PricingTermUnit',
-                type: 'String',
-                value: p.pricingTermUnit || 'Months'                   // TEST
-            },
-            {
-                name: 'In_AddedNode_SubscriptionTerm',
-                type: 'Number',
-                value: p.subscriptionTerm || 1                         // TEST
-            },
-            {
-                name: 'In_AddedNode_Id',
-                type: 'String',
-                value: refId
-            },
-            {
-                name: 'In_AddedNode_ProductBasedOn',
-                type: 'String',
-                value: TEST_PRODUCT_BASED_ON                           // TODO: productClassification.id from Apex
-            },
-            {
-                name: 'In_AddedNode_BusinessObjectType',
-                type: 'String',
-                value: TEST_BUSINESS_OBJECT_TYPE
-            },
-            // ── ConfiguratorContext inputs ────────────────────────────────
-            {
-                name: 'In_Cfg_TransactionId',
-                type: 'String',
-                value: TEST_TRANSACTION_ID
-            },
-            {
-                name: 'In_Cfg_TransactionLineId',
-                type: 'String',
-                value: refId                                           // reuse the same ref_ id as the line
-            },
-            {
-                name: 'In_Cfg_ParentName',
-                type: 'String',
-                value: 'Quote'
-            },
-            {
-                name: 'In_Cfg_Origin',
-                type: 'String',
-                value: 'Quote'
-            },
-            {
-                name: 'In_Cfg_ExplainabilityEnabled',
-                type: 'Boolean',
-                value: false
+                name: 'configuratorContext',
+                type: 'SObject',
+                value: configuratorContext
             }
         ];
     }
@@ -350,8 +339,10 @@ export default class CpqConfigurator extends LightningElement {
       FLOW STATUS HANDLER
    ============================ */
     handleFlowStatusChange(event) {
-        if (event.detail.status === 'FINISHED' || event.detail.status === 'FINISHED_SCREEN') {
-            this.showFlow = false; // close modal
+        const status = event.detail.status;
+
+        if (status === 'FINISHED' || status === 'FINISHED_SCREEN') {
+            this.showFlow = false; // close modal, return to product list
 
             // ── Capture all output variables from the flow ─────────────────
             const outputVars = event.detail.outputVariables || [];
@@ -367,21 +358,9 @@ export default class CpqConfigurator extends LightningElement {
                 console.log('[categoryAndProductDuplicate] Captured DM data:', JSON.stringify(dmData));
             } else {
                 console.warn('[categoryAndProductDuplicate] No output variables returned from the flow. ' +
-                    'Ensure the flow variables you want exposed have isOutput=true, ' +
-                    'or capture them via the dataManagerCapture component inside the flow.');
+                    'Ensure the flow variables you want exposed have isOutput=true.');
             }
         }
-    }
-
-    /* ============================
-       BACK FROM DATA MANAGER CAPTURE
-       Fired when the user clicks "Back" inside the
-       dataManagerCapture LWC (embedded in the flow screen).
-       We re-open the flow modal so the user can continue configuring.
-    ============================ */
-    handleDmCaptureBack() {
-        this.showCapturedData = false;
-        this.showFlow = true;
     }
 
     /* ============================

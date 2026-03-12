@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>Product Configurator Result</masterLabel>
+    <description>
+        Fired by customProductConfiguratorFooter when the user clicks Finish.
+        Carries the five Data-Manager output properties so that
+        categoryAndProductDuplicate (or any subscriber) can capture them.
+    </description>
+    <isExposed>true</isExposed>
+    <lightningMessageFields>
+        <fieldName>salesTransactionItems</fieldName>
+        <description>ProductConfig__SalesTransactionItem[] — JSON-serialised collection of sales transaction items.</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>transactionRecord</fieldName>
+        <description>ProductConfig__TransactionRecord — JSON-serialised transaction record.</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>attributeCategories</fieldName>
+        <description>ProductConfig__AttributeCategory[] — JSON-serialised attribute categories.</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>optionGroups</fieldName>
+        <description>ProductConfig__OptionGroup[] — JSON-serialised option groups.</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>summary</fieldName>
+        <description>ProductConfig__PricingSummary — JSON-serialised pricing summary.</description>
+    </lightningMessageFields>
+</LightningMessageChannel>

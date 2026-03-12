@@ -1,28 +1,27 @@
 <template>
-    <lightning-card title="Data Manager Capture" icon-name="utility:connected_apps">
+    <div class="slds-var-m-around_small">
 
-        <div slot="actions">
-            <lightning-button
-                label="← Back to Product List"
-                variant="neutral"
-                onclick={handleBack}>
-            </lightning-button>
-        </div>
+        <p class="slds-text-body_small slds-m-bottom_xx-small"><strong>salesTransactionItems</strong></p>
+        <pre class="dm-value">{displaySalesTransactionItems}</pre>
 
-        <div class="slds-var-m-around_small">
+        <p class="slds-text-body_small slds-m-top_small slds-m-bottom_xx-small"><strong>transactionRecord</strong></p>
+        <pre class="dm-value">{displayTransactionRecord}</pre>
 
-            <!-- One row per Data Manager property -->
-            <template for:each={displayRows} for:item="row">
-                <div key={row.key} class="section">
-                    <div class="section-header">
-                        <span class={row.dotClass}></span>
-                        {row.label}
-                    </div>
-                    <pre class="code-block">{row.value}</pre>
-                </div>
-            </template>
+        <p class="slds-text-body_small slds-m-top_small slds-m-bottom_xx-small"><strong>attributeCategories</strong></p>
+        <pre class="dm-value">{displayAttributeCategories}</pre>
 
-        </div>
+        <p class="slds-text-body_small slds-m-top_small slds-m-bottom_xx-small"><strong>optionGroups</strong></p>
+        <pre class="dm-value">{displayOptionGroups}</pre>
 
-    </lightning-card>
+        <p class="slds-text-body_small slds-m-top_small slds-m-bottom_xx-small"><strong>summary</strong></p>
+        <pre class="dm-value">{displaySummary}</pre>
+
+        <lightning-button
+            label="Finish"
+            variant="brand"
+            class="slds-m-top_small"
+            onclick={handleFinish}>
+        </lightning-button>
+
+    </div>
 </template>

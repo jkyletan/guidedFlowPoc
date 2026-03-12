@@ -119,33 +119,21 @@
     height: 100%;
 }
 
-/* ── Captured Data Manager Variables Panel ───────────────────────────── */
-.dm-capture-row {
-    border: 1px solid #e0e5ee;
+/* ── Flow Output Variables debug panel ───────────────────────────────── */
+.dm-output-value {
+    background: #f4f6f9;
+    border: 1px solid #d8dde6;
     border-radius: 4px;
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-}
-
-.dm-capture-key {
-    background-color: #f3f3f3;
-    padding: 0.35rem 0.75rem;
-    font-weight: 600;
-    font-size: 0.8125rem;
-    color: #3e3e3c;
-    border-bottom: 1px solid #e0e5ee;
-}
-
-.dm-capture-value {
-    background: #1b1b1b;
-    color: #c9d1d9;
+    color: #1b1b1b;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
     font-size: 0.75rem;
     line-height: 1.5;
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     margin: 0;
-    overflow-x: auto;
-    max-height: 200px;
-    overflow-y: auto;
     white-space: pre-wrap;
-    word-break: break-word;
+    word-break: break-all;
+    overflow-x: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    user-select: all;
 }

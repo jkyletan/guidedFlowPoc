@@ -168,19 +168,6 @@
                 </width>
             </styleProperties>
         </fields>
-        <fields>
-            <name>testrdisplay</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;Selected Location: {!SelectedLocation}&lt;/span&gt;&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
-            <styleProperties>
-                <verticalAlignment>
-                    <stringValue>top</stringValue>
-                </verticalAlignment>
-                <width>
-                    <stringValue>12</stringValue>
-                </width>
-            </styleProperties>
-        </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
@@ -221,19 +208,6 @@
                 <assignToReference>SelectedLocation</assignToReference>
                 <name>selectedLocationJSON</name>
             </outputParameters>
-            <styleProperties>
-                <verticalAlignment>
-                    <stringValue>top</stringValue>
-                </verticalAlignment>
-                <width>
-                    <stringValue>12</stringValue>
-                </width>
-            </styleProperties>
-        </fields>
-        <fields>
-            <name>testdisplay</name>
-            <fieldText>&lt;p&gt;Selected Location: {!SelectedLocation}&lt;/p&gt;&lt;p&gt;Stored Location: {!StoreSelectedLocation}&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
             <styleProperties>
                 <verticalAlignment>
                     <stringValue>top</stringValue>

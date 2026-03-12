@@ -165,8 +165,8 @@
 
                                 <lightning-flow flow-api-name="Custom_Product_Configurator_Flow"
                                     flow-input-variables={flowInputVariables}
-                                    onstatuschange={handleFlowStatusChange}
-                                    ondmcaptureback={handleDmCaptureBack}>
+                                    flow-finish-behavior='NONE'
+                                    onstatuschange={handleFlowStatusChange}>
                                 </lightning-flow>
 
                             </div>
@@ -177,28 +177,39 @@
                     <div class="slds-backdrop slds-backdrop_open"></div>
                 </template>
 
-                <!-- ── Captured Data Manager Variables Panel ─────────────── -->
+                <!-- ── Flow Output Variables (copy-paste debug) ───────────── -->
                 <template if:true={showCapturedData}>
-                    <lightning-card title="Captured Data Manager Variables" icon-name="utility:connected_apps"
+                    <lightning-card title="Flow Output Variables" icon-name="utility:connected_apps"
                         class="slds-m-top_medium">
                         <div class="slds-p-around_small">
                             <p class="slds-text-body_small slds-m-bottom_small">
-                                These are the output variables returned by the flow after it finished.
-                                If the list is empty, ensure the relevant flow variables have
-                                <code>isOutput=true</code>.
+                                Values returned by the flow via <code>outputVariables</code>.
+                                Copy each value below to share or verify.
                             </p>
-
-                            <template if:true={capturedDmRows}>
-                                <template for:each={capturedDmRows} for:item="row">
-                                    <div key={row.key} class="dm-capture-row">
-                                        <div class="dm-capture-key">{row.key}</div>
-                                        <pre class="dm-capture-value">{row.value}</pre>
-                                    </div>
-                                </template>
+                            <template for:each={capturedDmRows} for:item="row">
+                                <div key={row.key} class="slds-m-bottom_small">
+                                    <div class="slds-text-title_bold slds-m-bottom_xx-small">{row.key}</div>
+                                    <pre class="dm-output-value">{row.value}</pre>
+                                </div>
                             </template>
+                        </div>
+                    </lightning-card>
+                </template>
 
-                            <template if:false={capturedDmRows.length}>
-                                <p class="slds-text-color_weak">No output variables captured from the flow.</p>
+                <!-- ── LMS Received Data (live debug from platform event) ──── -->
+                <template if:true={showLmsReceivedData}>
+                    <lightning-card title="LMS Received Data (Platform Event)" icon-name="utility:broadcast"
+                        class="slds-m-top_medium">
+                        <div class="slds-p-around_small">
+                            <p class="slds-text-body_small slds-m-bottom_small">
+                                Values received live from the <strong>ProductConfiguratorResult</strong> Lightning Message Channel
+                                fired by <code>customProductConfiguratorFooter</code>.
+                            </p>
+                            <template for:each={lmsReceivedRows} for:item="row">
+                                <div key={row.key} class="slds-m-bottom_small">
+                                    <div class="slds-text-title_bold slds-m-bottom_xx-small">{row.key}</div>
+                                    <pre class="dm-output-value">{row.value}</pre>
+                                </div>
                             </template>
                         </div>
                     </lightning-card>

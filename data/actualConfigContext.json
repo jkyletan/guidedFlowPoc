@@ -1,0 +1,22 @@
+{
+"transactionLineId" : "ref_147d31fa-d4f2-4252-a061-360305186c26",
+"transactionId" : "0Q0d50000012YoDCAU",
+"parentName" : "Quote",
+"origin" : "Quote",
+"explainabilityEnabled" : false,
+"addedNodes" : [ {
+"unitPrice" : 50.0,
+"subscriptionTerm" : 1,
+"sellingModelType" : "Evergreen",
+"quantity" : 1.0,
+"productSellingModel" : "0jPd50000000rAnEAI",
+"productName" : "Fibre Broadband Gold",
+"productCode" : "CCC_FIBER_BROADBAND_GOLD",
+"productBasedOn" : "11Bd5000005gs5zEAA",
+"product" : "01td5000004LI9KAAW",
+"pricingTermUnit" : "Months",
+"pricebookEntry" : "01ud5000000Ujz7AAC",
+"id" : "ref_147d31fa-d4f2-4252-a061-360305186c26",
+"businessObjectType" : "QuoteLineItem"
+} ]
+}
