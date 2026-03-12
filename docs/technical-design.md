@@ -1,6 +1,6 @@
 # Guided Flow POC — Technical Design Document
 
-> **Last Updated:** March 2026  
+> **Last Updated:** March 12, 2026  
 > **Project Path:** `guidedFlowPoc/`  
 > **Purpose:** A Salesforce LWC-based product configurator that drives a custom Flow  
 > (`Custom_Product_Configurator_Flow`) through a modal UI, mapping CPQ product data from Apex  
@@ -97,10 +97,11 @@ The target audience is an internal developer who needs to extend this work, wire
 | Component | Role |
 |-----------|------|
 | `categoryAndProductDuplicate` | **Main configurator UI** — category stepper, product cards, flow modal, output capture panel. Subscribes to the `ProductConfiguratorResult` Lightning Message Channel on load to receive live data from the footer component and close the flow modal automatically. |
-| `dataManagerCapture` | _(Superseded by `customProductConfiguratorFooter`)_ Original flow screen component. Retained in source for reference. |
-| `customProductConfiguratorFooter` | Replacement for `dataManagerCapture`. Flow screen component that acts as a **sticky footer** with a **Finish** button. Receives Data Manager outputs reactively, fires `FlowAttributeChangeEvent` for each `Out_*` variable, and on Finish publishes all captured properties over the `ProductConfiguratorResult` Lightning Message Channel before firing `FlowNavigationFinishEvent`. |
+| `customProductConfiguratorFooter` | Flow screen component that acts as a **sticky footer** with a **Finish** button. Receives Data Manager outputs via `@api` input-only properties. On Finish, publishes all five captured properties over the `ProductConfiguratorResult` Lightning Message Channel before firing `FlowNavigationFinishEvent`. Does **not** use `FlowAttributeChangeEvent` — there are no `Out_*` flow variables; data is returned exclusively via LMS. |
 | `flowOrderSummary` | Review / order summary screen shown after cart is finalized |
 | `managedWiFiAdvancedFlowCart` | Side-panel cart display |
+| `managedWifiAdvancedLocationSelector` | Location selection component (stub — logic commented out; connected to flow location context) |
+| `reliesOnQuoteDetail` | Empty stub component; placeholder for future quote-detail relies-on integration |
 
 ### Lightning Message Channels
 
@@ -313,7 +314,7 @@ Start
 
 The flow goes directly from Start to the screen — no decision or assignment nodes are needed because `configuratorContext` arrives fully populated from the LWC.
 
-Output variable population is handled by `customProductConfiguratorFooter` via `FlowAttributeChangeEvent` (see [Section 9](#flow-output-variable-mapping)).
+Output variable population is handled by `customProductConfiguratorFooter` via LMS publish on Finish (see [Section 9](#flow-output-variable-mapping)).
 
 ### Screen: `S01_ProductConfiguratorUI`
 
@@ -329,97 +330,90 @@ The single screen hosts the following flow components in order:
 | `S01_Header` | `runtime_industries_cfg:productHeader` | Product header with quantity |
 | `S01_AttributesPanel` | `runtime_industries_cfg:attributes` | Attribute categories panel (tabs variant) |
 | `S01_OptionGroups` | `runtime_industries_cfg:optionGroups` | Option groups panel (tabs variant) |
-| `S01_CustomProductConfiguratorFooter` | `c:customProductConfiguratorFooter` | Footer component; captures Data Manager outputs, publishes them via LMS, populates `Out_*` variables, provides Finish button |
+| `S01_CustomProductConfiguratorFooter` | `c:customProductConfiguratorFooter` | Footer component; captures Data Manager outputs as input-only properties, publishes them via LMS on Finish, provides Finish button |
 
 ---
 
 ## Flow Input Variable Mapping
 
-The `flowInputVariables` getter in `categoryAndProductDuplicate.js` passes a single Apex-typed variable:
+The `flowInputVariables` getter in `categoryAndProductDuplicate.js` passes a single variable:
 
-| Flow Variable | Type | Description |
+| Flow Variable | Type (in `flowInputVariables`) | Description |
 |--------------|------|-------------|
-| `configuratorContext` | `apex://ProductConfig.ConfiguratorContext` | Fully assembled configurator context object |
+| `configuratorContext` | `'SObject'` | Fully assembled configurator context object |
+
+> **Note:** The LWC passes `type: 'SObject'` (not `type: 'apex://...'`) in the `flowInputVariables` array. The flow XML declares `configuratorContext` as `dataType: Apex / apexClass: ProductConfig__ConfiguratorContext`, which is compatible.
 
 The `configuratorContext` object is built in JavaScript with the following structure:
 
 ```javascript
 {
-    transactionId:         TEST_TRANSACTION_ID,       // TODO: real Quote/Order recordId
-    transactionLineId:     refId,                     // generated ref_<UUID>
+    transactionId:         this.recordId,              // from CurrentPageReference (null if not on record page)
+    transactionLineId:     refId,                      // generated ref_<UUID>
     parentName:            'Quote',
     origin:                'Quote',
     explainabilityEnabled: false,
     addedNodes: [{
-        product:             selectedProduct.productId,
-        productName:         selectedProduct.productName,
-        productCode:         selectedProduct.productCode,
-        unitPrice:           selectedProduct.price,
+        product:             selectedProduct.productId             || null,
+        productName:         selectedProduct.productName           || null,
+        productCode:         selectedProduct.productCode           || null,
+        unitPrice:           selectedProduct.price != null ? selectedProduct.price : null,
         quantity:            1,
-        pricebookEntry:      selectedProduct.pricebookEntryId,
-        productSellingModel: selectedProduct.productSellingModelId,
-        sellingModelType:    selectedProduct.sellingModelType,
-        pricingTermUnit:     selectedProduct.pricingTermUnit,
-        subscriptionTerm:    selectedProduct.subscriptionTerm,
+        pricebookEntry:      selectedProduct.pricebookEntryId      || null,
+        productSellingModel: selectedProduct.productSellingModelId || null,
+        sellingModelType:    selectedProduct.sellingModelType      || null,
+        pricingTermUnit:     selectedProduct.pricingTermUnit       || null,
+        subscriptionTerm:    selectedProduct.subscriptionTerm      || null,
         id:                  refId,
-        productBasedOn:      TEST_PRODUCT_BASED_ON,   // TODO
-        businessObjectType:  TEST_BUSINESS_OBJECT_TYPE // TODO
+        productBasedOn:      null,                     // TODO: derive from ProductClassification
+        businessObjectType:  'QuoteLineItem'           // derived from origin === 'Quote'
     }]
 }
 ```
 
-> **⚠️ TODO items** — `transactionId`, `productBasedOn`, and `businessObjectType` still use test/fallback constants. Replace with real dynamic values once the parent record context (Quote ID) and product classification API are integrated.
+> **⚠️ TODO items** — `transactionId` comes from `CurrentPageReference` and will be `null` when the component is not hosted on a record page. `productBasedOn` is not yet populated (hardcoded `null`).
 
 ---
 
 ## Flow Output Variable Mapping
 
-Output variables are populated **reactively during the flow screen interaction** by the `dataManagerCapture` LWC — not by an assignment node after the screen closes. Every time the Data Manager pushes a new value to `dataManagerCapture` via its `inputParameter` binding, the corresponding `@api` setter fires a `FlowAttributeChangeEvent` which writes the value directly into the flow output variable.
+**There are no `Out_*` flow output variables in this flow.** The flow XML declares only one variable (`configuratorContext`, `isOutput=false`). Data Manager output is not returned through `event.detail.outputVariables` on `FINISHED`.
 
-### `dataManagerCapture` — Captured Properties
+### Actual Output Mechanism — LMS Only
 
-| `@api` Input Property | Bound to (flow `inputParameter`) | `FlowAttributeChangeEvent` → Flow Output Variable | Apex Type |
-|---|---|---|---|
-| `salesTransactionItems` | `S01_DataManager.salesTransactionItems` | `Out_salesTransactionItems` | `ProductConfig__SalesTransactionItem[]` |
-| `transactionRecord` | `S01_DataManager.transactionRecord` | `Out_transactionRecord` | `ProductConfig__TransactionRecord` |
-| `attributeCategories` | `S01_DataManager.attributeCategories` | `Out_attributeCategories` | `ProductConfig__AttributeCategory[]` |
-| `optionGroups` | `S01_DataManager.optionGroups` | `Out_optionGroups` | `ProductConfig__OptionGroup[]` |
-| `summary` | `S01_DataManager.summary` | `Out_summary` | `ProductConfig__PricingSummary` |
+`customProductConfiguratorFooter` captures all five Data Manager properties as `inputOnly` `@api` properties (no `FlowAttributeChangeEvent` is used). When the user clicks **Finish**, the component:
 
-### Flow Output Variables (`isOutput=true`)
+1. Publishes the five properties as a single payload over the `ProductConfiguratorResult` Lightning Message Channel.
+2. Fires `FlowNavigationFinishEvent` to close the flow.
 
-These are declared in the flow XML and returned to the host LWC in `event.detail.outputVariables` on `FINISHED`:
+`categoryAndProductDuplicate` receives the data via its LMS subscription in `_handleLmsMessage()` and stores it in `lmsReceivedData`. The modal closes immediately upon LMS receipt — **before** the flow's `FINISHED` status event fires.
 
-| Variable Name | Apex Class | Collection |
+### Properties Published via LMS
+
+| Property | Data Manager Source | LMS Payload Key |
 |---|---|---|
-| `Out_salesTransactionItems` | `ProductConfig__SalesTransactionItem` | ✅ Yes |
-| `Out_transactionRecord` | `ProductConfig__TransactionRecord` | ❌ No |
-| `Out_attributeCategories` | `ProductConfig__AttributeCategory` | ✅ Yes |
-| `Out_optionGroups` | `ProductConfig__OptionGroup` | ✅ Yes |
-| `Out_summary` | `ProductConfig__PricingSummary` | ❌ No |
+| `salesTransactionItems` | `S01_DataManager.salesTransactionItems` | `salesTransactionItems` |
+| `transactionRecord` | `S01_DataManager.transactionRecord` | `transactionRecord` |
+| `attributeCategories` | `S01_DataManager.attributeCategories` | `attributeCategories` |
+| `optionGroups` | `S01_DataManager.optionGroups` | `optionGroups` |
+| `summary` | `S01_DataManager.summary` | `summary` |
 
-### `outputParameters` Binding (Flow XML)
+### Debug Panels
 
-Each output variable is wired to the LWC's corresponding `outputOnly` property in the flow screen field definition:
+`categoryAndProductDuplicate` renders two debug panels:
 
-```xml
-<outputParameters>
-    <assignToReference>Out_salesTransactionItems</assignToReference>
-    <name>Out_salesTransactionItems</name>
-</outputParameters>
-<!-- …repeated for Out_transactionRecord, Out_attributeCategories,
-         Out_optionGroups, Out_summary -->
-```
+| Panel | Data Source | Visible When |
+|---|---|---|
+| **Flow Output Variables** (`showCapturedData`) | `event.detail.outputVariables` from `handleFlowStatusChange` (`FINISHED`) | `outputVars.length > 0` — currently **always empty** since no flow variables have `isOutput=true` |
+| **LMS Received Data** (`showLmsReceivedData`) | `lmsReceivedData` populated by `_handleLmsMessage()` | Set to `true` on any LMS message receipt |
 
-### Finish Button
-
-`dataManagerCapture` renders a **Finish** button directly on the flow screen. Clicking it dispatches `FlowNavigationFinishEvent`, which triggers the flow's native FINISH navigation and fires `onstatuschange` (`FINISHED`) on the host `lightning-flow` element — closing the modal and delivering the output variables to `categoryAndProductDuplicate`.
+> **Note:** The "Flow Output Variables" debug panel will never populate under the current implementation. All real configurator data arrives via the LMS panel. The `handleFlowStatusChange` handler is still present but only drives modal close logic when `status === 'FINISHED'`.
 
 ---
 
 ## Test / Fallback Data
 
-All test data originates from `data/mockConfigContext.json`, which represents a valid CPQ `ConfiguratorContext` snapshot:
+`data/mockConfigContext.json` represents a valid CPQ `ConfiguratorContext` snapshot and serves as a **reference document** — its values are no longer injected as hardcoded fallbacks in the LWC. Use it to understand the expected shape of `configuratorContext` and to re-verify ID values when refreshing a scratch org.
 
 ```json
 {
@@ -446,9 +440,9 @@ All test data originates from `data/mockConfigContext.json`, which represents a 
 }
 ```
 
-The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and used as default fallbacks in `flowInputVariables`.
+The same data is still hard-coded in `GetTransactionLineResult.buildMockResult()`.
 
-### Key Test IDs (Scratch Org)
+### Key Test IDs (Scratch Org — may differ in new orgs)
 
 | Label | ID |
 |-------|----|
@@ -480,19 +474,19 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 ---
 
-### 3. Fallback / Test Values Always Present
+### 3. No Hardcoded Test Fallbacks in `flowInputVariables`
 
-**Decision:** Every entry in `flowInputVariables` includes a fallback literal value (using JavaScript `||` short-circuit), even when a real dynamic value is available.
+**Decision:** `flowInputVariables` no longer carries hardcoded test/fallback literal constants (`TEST_TRANSACTION_ID`, `TEST_PRODUCT_BASED_ON`, etc.). All fields use the live runtime values (`this.recordId`, product fields) directly, defaulting to `null` when not available.
 
-**Rationale:** During development, the flow would fail to render if any required input variable was `null` or `undefined`. Fallback values ensure the flow always launches correctly while dynamic mapping is still being validated. The fallback values mirror the exact mock context JSON so the flow is in a valid state.
+**Rationale:** The earlier approach of hard-coded fallback literals (`|| 'some-scratch-org-id'`) was removed once the LWC was wired to `CurrentPageReference` for `recordId`. Nulls are acceptable during development because the Data Manager handles absent context gracefully, and removing the constants eliminates the risk of stale scratch-org IDs causing confusion in new environments.
 
 ---
 
 ### 4. UUID-Based `ref_` Line IDs
 
-**Decision:** `In_AddedNode_Id` and `In_Cfg_TransactionLineId` are set to a freshly generated `ref_<UUID>` string on every Configure click.
+**Decision:** `addedNode.id` and `configuratorContext.transactionLineId` are both set to a freshly generated `ref_<UUID>` string on every Configure click.
 
-**Rationale:** The CPQ flow uses this ID as a transaction line reference. Generating a new UUID each time prevents collision when a user configures multiple products in the same session. The same value is shared between `AddedNode.id` and `ConfiguratorContext.transactionLineId` so the flow's internal references stay consistent.
+**Rationale:** The CPQ flow uses this ID as a transaction line reference. Generating a new UUID each time prevents collision when a user configures multiple products in the same session. The same value is shared between `addedNode.id` and `configuratorContext.transactionLineId` so the flow's internal references stay consistent.
 
 ---
 
@@ -512,27 +506,27 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 ---
 
-### 7. Output Variable Population via `FlowAttributeChangeEvent` (Not Assignment Node)
+### 7. Output Data Returned via LMS (Not `FlowAttributeChangeEvent` or Flow Output Variables)
 
-**Decision:** The `dataManagerCapture` LWC populates all `Out_*` flow output variables reactively via `FlowAttributeChangeEvent` dispatched from each `@api` setter, rather than using a dedicated `Assign_DM_Outputs` assignment node after the screen closes.
+**Decision:** `customProductConfiguratorFooter` does **not** use `FlowAttributeChangeEvent` and the flow does **not** declare any `Out_*` output variables. All captured Data Manager data is published once — atomically — via the `ProductConfiguratorResult` Lightning Message Channel when the user clicks Finish.
 
-**Rationale:** An assignment node only runs once — after the screen navigates away. The `FlowAttributeChangeEvent` approach fires on every Data Manager update while the screen is still open, keeping the output variables current at all times. This also keeps the flow graph cleaner (one fewer node) and moves all output-capture logic into the LWC layer where it is easier to extend and test.
-
----
-
-### 8. `dataManagerCapture` as a Multi-Property Capture Component
-
-**Decision:** `dataManagerCapture` captures five distinct Data Manager outputs (`salesTransactionItems`, `transactionRecord`, `attributeCategories`, `optionGroups`, `summary`) rather than a single pass-through.
-
-**Rationale:** The Data Manager exposes many output properties but the host LWC only needs a curated subset. Centralising capture in one dedicated LWC makes it straightforward to add or remove properties without touching the flow graph. Each property follows the same getter/setter + `FlowAttributeChangeEvent` pattern, making the component easy to reason about and extend.
+**Rationale:** `FlowAttributeChangeEvent` requires each property to be declared as an `outputOnly` or `inputOutput` property in the LWC meta XML and a corresponding `isOutput=true` variable in the flow XML. This adds significant boilerplate and couples the LWC to the flow's variable list. The LMS approach is simpler: the footer publishes one payload, the host LWC receives it and closes the modal immediately, with no dependency on `event.detail.outputVariables`. The trade-off is that the "Flow Output Variables" debug panel in `categoryAndProductDuplicate` will always be empty — all real data is visible in the "LMS Received Data" debug panel.
 
 ---
 
-### 9. Finish Button Lives in `dataManagerCapture`, Not the Modal Shell
+### 8. `customProductConfiguratorFooter` as a Multi-Property Capture Component
 
-**Decision:** The **Finish** button that fires `FlowNavigationFinishEvent` is rendered by `dataManagerCapture` (a flow screen component), not by the `categoryAndProductDuplicate` host LWC's modal footer.
+**Decision:** `customProductConfiguratorFooter` captures five distinct Data Manager outputs (`salesTransactionItems`, `transactionRecord`, `attributeCategories`, `optionGroups`, `summary`) as `inputOnly` `@api` properties rather than a single pass-through.
 
-**Rationale:** `FlowNavigationFinishEvent` must be dispatched from within a component that is part of the flow screen — i.e., a component whose `targets` includes `lightning__FlowScreen`. The host LWC sits outside the flow boundary and cannot directly trigger flow navigation events. Placing the button inside `dataManagerCapture` satisfies this requirement and keeps flow navigation logic co-located with the capture logic.
+**Rationale:** The Data Manager exposes many output properties but the host LWC only needs a curated subset. Centralising capture in one dedicated LWC makes it straightforward to add or remove properties without touching the flow graph. All five properties are bundled into a single LMS publish on Finish, keeping the message schema explicit and versioned in one place.
+
+---
+
+### 9. Finish Button Lives in `customProductConfiguratorFooter`, Not the Modal Shell
+
+**Decision:** The **Finish** button that fires `FlowNavigationFinishEvent` is rendered by `customProductConfiguratorFooter` (a flow screen component), not by the `categoryAndProductDuplicate` host LWC's modal footer.
+
+**Rationale:** `FlowNavigationFinishEvent` must be dispatched from within a component that is part of the flow screen — i.e., a component whose `targets` includes `lightning__FlowScreen`. The host LWC sits outside the flow boundary and cannot directly trigger flow navigation events. Placing the button inside `customProductConfiguratorFooter` satisfies this requirement and keeps flow navigation logic co-located with the LMS publish logic.
 
 ---
 
@@ -550,11 +544,11 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 ### Issue 2 — Flow Not Launching (Invalid Input Variable Type)
 
-**Symptom:** `lightning-flow` threw a console error about invalid input variable types when `type: 'apex://...'` was used.
+**Symptom:** `lightning-flow` threw a console error about invalid input variable types when `type: 'apex://...'` was used in the `flowInputVariables` array.
 
-**Root Cause:** `dataManagerCapture.js-meta.xml` had `apex://` prefixed type declarations in its `propertyType` which are not supported as LWC property types in this context.
+**Root Cause:** The `flowInputVariables` array entry used `type: 'apex://ProductConfig.ConfiguratorContext'`, which the `lightning-flow` component does not accept as a valid type string in JavaScript.
 
-**Fix:** Replaced all `apex://` type references with `String` in the meta XML.
+**Fix:** Changed the `type` field in the `flowInputVariables` entry to `'SObject'`. The flow XML continues to declare `configuratorContext` as `dataType: Apex / apexClass: ProductConfig__ConfiguratorContext`, which is compatible with an `SObject`-typed input from the LWC side.
 
 ---
 
@@ -568,13 +562,13 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 ---
 
-### Issue 4 — Flow Output Variables Empty
+### Issue 4 — Flow Output Variables Always Empty
 
-**Symptom:** After flow finished, `event.detail.outputVariables` was an empty array.
+**Symptom:** After flow finishes, `event.detail.outputVariables` is an empty array.
 
-**Root Cause:** Flow variables must have `isOutput = true` to be exposed to the hosting LWC through `statuschange`.
+**Root Cause / Current State:** The flow has no `isOutput=true` variables. The current architecture does not use flow output variables — data is returned via the `ProductConfiguratorResult` LMS channel instead (see Decision 7 and Section 9).
 
-**Resolution:** Document that any flow variable you need back in the LWC must be marked `Available for output` in Flow Builder. The debug panel (`showCapturedData`) was added precisely to inspect this. The `dataManagerCapture` LWC inside the flow is the canonical capture mechanism — it fires `FlowAttributeChangeEvent` for each output variable reactively, and the flow XML wires each `Out_*` LWC property to its corresponding flow variable via `outputParameters`.
+**Resolution:** The "Flow Output Variables" debug panel in `categoryAndProductDuplicate` exists but will always be empty under the current implementation. This is expected behaviour. Data Manager output is visible in the "LMS Received Data" debug panel. If flow output variables are needed in the future, add `Out_*` variables with `isOutput=true` to the flow XML and wire `customProductConfiguratorFooter` to fire `FlowAttributeChangeEvent` from each `@api` setter.
 
 ---
 
@@ -582,7 +576,7 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 **Symptom / Background:** The original flow had an `Assign_DM_Outputs` assignment node placed after the screen that copied `S01_DataManager.salesTransactionItems` → `Out_salesTransactionItems`. This ran only once after screen navigation and did not support multiple output properties cleanly.
 
-**Resolution:** The assignment node was deleted. `dataManagerCapture` now owns all output variable population via `FlowAttributeChangeEvent` in each `@api` setter (Decision 7). The screen's connector to `Assign_DM_Outputs` was removed, making the screen the terminal node in the flow.
+**Resolution:** The assignment node was deleted and the `Out_*` flow variables were also removed. `customProductConfiguratorFooter` now owns all output data delivery via a single LMS publish on Finish (Decision 7). The screen is the terminal node in the flow.
 
 ---
 
@@ -590,11 +584,11 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 ### High Priority
 
-- [ ] **Replace `TEST_TRANSACTION_ID`** — The flow's `In_Cfg_TransactionId` should receive the real Quote or Order record ID from the LWC's parent record page context (e.g., `@api recordId` from the parent component, passed down as a prop).
+- [ ] **Handle null `transactionId`** — `this.recordId` comes from `CurrentPageReference` and will be `null` when the component is not placed on a standard record page (e.g., App Builder preview, standalone tab). Add a guard or a fallback `@api recordId` property so the flow always receives a valid Quote/Order ID.
 
-- [ ] **Replace `TEST_PRODUCT_BASED_ON`** — `In_AddedNode_ProductBasedOn` should be the product classification ID. This is typically available via a CPQ product attributes query or a SOQL on `ProductClassification` joined to the Product.
+- [ ] **Populate `productBasedOn`** — `addedNode.productBasedOn` is currently hardcoded to `null`. This should be the product classification ID, typically available via SOQL on `ProductClassification` joined to the Product.
 
-- [ ] **Replace `TEST_BUSINESS_OBJECT_TYPE`** — Derive from the parent record's `SObjectType` (Quote → `QuoteLineItem`, Order → `OrderItem`).
+- [ ] **Replace `TEST_BUSINESS_OBJECT_TYPE`** — `businessObjectType` is derived as `origin === 'Quote' ? 'QuoteLineItem' : 'OrderItem'` but `origin` is hardcoded to `'Quote'`. Derive from the actual parent record's `SObjectType` once `@api recordId` and a record type lookup are wired in.
 
 ### Medium Priority
 
@@ -602,7 +596,9 @@ The same data is hard-coded in `GetTransactionLineResult.buildMockResult()` and 
 
 - [ ] **Support multi-product cart flow launches** — Currently one flow per "Configure" click. Consider whether the flow needs to be called with multiple `addedNodes` when the cart has multiple items.
 
-- [ ] **Add `@api recordId`** to `categoryAndProductDuplicate` — Needed to dynamically resolve `transactionId` (Quote ID) from the record page.
+- [ ] **Implement `reliesOnQuoteDetail`** — Currently an empty stub. Wire it to display or act on Quote details as needed.
+
+- [ ] **Complete `managedWifiAdvancedLocationSelector`** — The `connectedCallback` location-processing logic is commented out. Uncomment and validate once location data is available.
 
 ### Low Priority
 
@@ -627,7 +623,9 @@ sf project deploy start --source-dir force-app --target-org <alias>
 
 ### Known Deployment Blockers (Already Fixed)
 
-- `dataManagerCapture.js-meta.xml` — `type` attributes now use `apex://ProductConfig.*` syntax (e.g., `apex://ProductConfig.SalesTransactionItem[]`), matching the format expected by Flow Builder for Apex-typed screen component properties.
+- `customProductConfiguratorFooter.js-meta.xml` — `type` attributes correctly use `apex://ProductConfig.*` syntax (e.g., `apex://ProductConfig.SalesTransactionItem[]`), matching the format expected by Flow Builder for Apex-typed screen component input properties. All five captured properties are declared as `role="inputOnly"`.
+
+- `flowInputVariables` in `categoryAndProductDuplicate.js` — `type` is set to `'SObject'` (not `'apex://...'`) so `lightning-flow` accepts the input without a type error.
 
 ### Post-Deploy Verification
 
@@ -635,8 +633,8 @@ sf project deploy start --source-dir force-app --target-org <alias>
 2. Pass the correct `rootCategoryId` as a component property.
 3. Open browser DevTools → Console; look for `[loadProductDetails]` and `[categoryAndProductDuplicate]` prefixed logs.
 4. Click "Configure" on any product; verify the flow modal opens fullscreen.
-5. Proceed through the flow; click the **Finish** button rendered by `dataManagerCapture`.
-6. After the flow finishes, inspect the **Flow Output Variables** debug panel — all five `Out_*` variables should be populated with the Data Manager's last-known values.
+5. Proceed through the flow; click the **Finish** button rendered by `customProductConfiguratorFooter`.
+6. After the flow finishes, inspect the **LMS Received Data** debug panel — all five properties should be populated with the Data Manager's last-known values. The "Flow Output Variables" panel will be empty (expected — no `Out_*` flow variables exist).
 
 ### CPQ Namespace
 

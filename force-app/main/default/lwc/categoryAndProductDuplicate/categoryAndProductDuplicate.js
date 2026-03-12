@@ -1,4 +1,5 @@
 import { LightningElement, track, api, wire } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
 import { subscribe, MessageContext } from 'lightning/messageService';
 import PRODUCT_CONFIGURATOR_RESULT
     from '@salesforce/messageChannel/ProductConfiguratorResult__c';
@@ -33,6 +34,20 @@ export default class CpqConfigurator extends LightningElement {
     // ── LMS: Product Configurator Result subscription ────────────────────────
     @wire(MessageContext)
     messageContext;
+
+    // ── CurrentPageReference: provides recordId (transactionId) ──────────────
+    _pageRef;
+    @wire(CurrentPageReference)
+    wiredPageRef(ref) {
+        this._pageRef = ref;
+    }
+
+    /** The recordId from the current page (Quote or Order Id) */
+    get recordId() {
+        return this._pageRef?.state?.recordId
+            || this._pageRef?.attributes?.recordId
+            || null;
+    }
 
     _lmsSubscription = null;
 
@@ -102,36 +117,35 @@ export default class CpqConfigurator extends LightningElement {
 
         console.log('[categoryAndProductDuplicate] flowInputVariables — selectedProduct:', JSON.stringify(p));
 
-        // ── Test/fallback values ─────────────────────────────────────────
-        const TEST_TRANSACTION_ID       = '0Q0d50000012YoDCAU';        // TODO: real Quote/Order recordId
-        const TEST_PRODUCT_BASED_ON     = '11Bd5000005gs5zEAA';        // TODO: productClassification.id from Apex
-        const TEST_BUSINESS_OBJECT_TYPE = 'QuoteLineItem';             // TODO: derive from parent object type
-
         // ref_ id is generated fresh each time so the flow sees a unique line ref
         const refId = 'ref_' + this._generateUUID();
 
+        // Derive businessObjectType from the parent/origin
+        const origin = 'Quote';
+        const businessObjectType = origin === 'Quote' ? 'QuoteLineItem' : 'OrderItem';
+
         // Build the configuratorContext object matching ProductConfig__ConfiguratorContext
         const configuratorContext = {
-            transactionId:        TEST_TRANSACTION_ID,
-            transactionLineId:    refId,
-            parentName:           'Quote',
-            origin:               'Quote',
+            transactionId:         this.recordId,
+            transactionLineId:     refId,
+            parentName:            origin,
+            origin:                origin,
             explainabilityEnabled: false,
             addedNodes: [
                 {
-                    product:              p.productId             || '01td5000004LI9LAAW',
-                    productName:          p.productName           || 'Fibre Broadband Bronze',
-                    productCode:          p.productCode           || 'CCC_FIBER_BROADBAND_BRONZE',
-                    unitPrice:            p.price != null ? p.price : 30.0,
+                    product:              p.productId             || null,
+                    productName:          p.productName           || null,
+                    productCode:          p.productCode           || null,
+                    unitPrice:            p.price != null ? p.price : null,
                     quantity:             1,
-                    pricebookEntry:       p.pricebookEntryId      || '01ud5000000Ujz4AAC',
-                    productSellingModel:  p.productSellingModelId || '0jPd50000000rAnEAI',
-                    sellingModelType:     p.sellingModelType      || 'Evergreen',
-                    pricingTermUnit:      p.pricingTermUnit       || 'Months',
-                    subscriptionTerm:     p.subscriptionTerm      || 1,
+                    pricebookEntry:       p.pricebookEntryId      || null,
+                    productSellingModel:  p.productSellingModelId || null,
+                    sellingModelType:     p.sellingModelType      || null,
+                    pricingTermUnit:      p.pricingTermUnit       || null,
+                    subscriptionTerm:     p.subscriptionTerm      || null,
                     id:                   refId,
-                    productBasedOn:       TEST_PRODUCT_BASED_ON,
-                    businessObjectType:   TEST_BUSINESS_OBJECT_TYPE
+                    productBasedOn:       null,
+                    businessObjectType:   businessObjectType
                 }
             ]
         };
@@ -261,27 +275,7 @@ export default class CpqConfigurator extends LightningElement {
         }
     }
 
-    // Select product for quote
-    // handleSelectCheckbox(event) {
-    //     const productId = event.target.dataset.id;
-    //     const checked = event.target.checked;
-
-    //     this.products = this.products.map(p => {
-    //         if (p.productId === productId) return { ...p, selected: checked };
-    //         return p;
-    //     });
-
-    //     const product = this.products.find(p => p.productId === productId);
-    //     if (!product) return;
-
-    //     if (checked) {
-    //         if (!this.cart.some(p => p.productId === productId)) {
-    //             this.cart = [...this.cart, product];
-    //         }
-    //     } else {
-    //         this.cart = this.cart.filter(p => p.productId !== productId);
-    //     }
-    // }
+    // Select product — toggles selection and updates cart
     handleSelectCheckbox(event) {
         const productId = event.currentTarget.dataset.id;
 

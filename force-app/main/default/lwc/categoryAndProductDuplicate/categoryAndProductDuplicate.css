@@ -77,22 +77,22 @@
     background: #1b96ff;
 }
 
-/* ── Flow Modal — maximised ──────────────────────────────────────────────── */
+/* ── Flow Modal — medium size ─────────────────────────────────────────────── */
 
 /* Push the modal section itself to full viewport size */
 .flow-modal {
     padding: 0 !important;
 }
 
-/* Make the container stretch edge-to-edge and top-to-bottom */
+/* Make the container a reasonable size, centered in viewport */
 .flow-modal__container {
-    width:      96vw  !important;
-    max-width:  96vw  !important;
-    height:     94vh  !important;
-    max-height: 94vh  !important;
+    width:      75vw  !important;
+    max-width:  75vw  !important;
+    height:     80vh  !important;
+    max-height: 80vh  !important;
     /* vertically centre within the viewport */
-    top:    3vh !important;
-    bottom: 3vh !important;
+    top:    10vh !important;
+    bottom: 10vh !important;
     /* horizontally centre */
     left:   50% !important;
     transform: translateX(-50%) !important;
@@ -111,12 +111,16 @@
     max-height: none !important;
     height: 100% !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-/* Let the flow itself fill the body */
+/* Let the flow itself fill the body and use flex so footer stays at bottom */
 .flow-modal__body lightning-flow {
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: 100%;
+    min-height: 0;
 }
 
 /* ── Flow Output Variables debug panel ───────────────────────────────── */

@@ -628,7 +628,7 @@
                     <inputParameters>
                         <name>showSummaryTotalSection</name>
                         <value>
-                            <elementReference>S01_DataManager.showSummaryTotalSection</elementReference>
+                            <booleanValue>true</booleanValue>
                         </value>
                     </inputParameters>
                     <inputParameters>
@@ -652,7 +652,7 @@
                     <inputParameters>
                         <name>areMessagesFixed</name>
                         <value>
-                            <elementReference>S01_DataManager.areMessagesFixed</elementReference>
+                            <booleanValue>false</booleanValue>
                         </value>
                     </inputParameters>
                     <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
@@ -722,26 +722,6 @@
             </inputParameters>
             <inputsOnNextNavToAssocScrn>ResetValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
-            <outputParameters>
-                <assignToReference>Out_salesTransactionItems</assignToReference>
-                <name>Out_salesTransactionItems</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>Out_transactionRecord</assignToReference>
-                <name>Out_transactionRecord</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>Out_attributeCategories</assignToReference>
-                <name>Out_attributeCategories</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>Out_optionGroups</assignToReference>
-                <name>Out_optionGroups</name>
-            </outputParameters>
-            <outputParameters>
-                <assignToReference>Out_summary</assignToReference>
-                <name>Out_summary</name>
-            </outputParameters>
             <styleProperties>
                 <verticalAlignment>
                     <stringValue>top</stringValue>
@@ -770,45 +750,5 @@
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>Out_attributeCategories</name>
-        <apexClass>ProductConfig__AttributeCategory</apexClass>
-        <dataType>Apex</dataType>
-        <isCollection>true</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>Out_optionGroups</name>
-        <apexClass>ProductConfig__OptionGroup</apexClass>
-        <dataType>Apex</dataType>
-        <isCollection>true</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>Out_salesTransactionItems</name>
-        <apexClass>ProductConfig__SalesTransactionItem</apexClass>
-        <dataType>Apex</dataType>
-        <isCollection>true</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>Out_summary</name>
-        <apexClass>ProductConfig__PricingSummary</apexClass>
-        <dataType>Apex</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>Out_transactionRecord</name>
-        <apexClass>ProductConfig__TransactionRecord</apexClass>
-        <dataType>Apex</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
     </variables>
 </Flow>

@@ -1,4 +1,10 @@
 <template>
+    <template if:true={isLoading}>
+        <lightning-spinner
+            alternative-text="Loading..."
+            size="large">
+        </lightning-spinner>
+    </template>
     <footer class="footer-bar">
         <div class="footer-content">
             <lightning-button

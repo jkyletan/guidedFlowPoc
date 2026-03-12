@@ -2,8 +2,7 @@
  * customProductConfiguratorFooter
  *
  * Replacement for dataManagerCapture.
- * Receives Data-Manager outputs via @api setter/getter pairs and fires
- * FlowAttributeChangeEvent to populate the flow's Out_* variables reactively.
+ * Receives Data-Manager outputs via @api setter/getter pairs.
  *
  * The HTML renders ONLY a sticky footer bar with a "Finish" button aligned to the
  * right — no property debug display.
@@ -15,15 +14,15 @@
  *      flow's FINISHED event.
  *   2. Fires FlowNavigationFinishEvent to close / complete the flow.
  *
- * Properties captured (same as dataManagerCapture):
- *   - salesTransactionItems  → Out_salesTransactionItems
- *   - transactionRecord      → Out_transactionRecord
- *   - attributeCategories    → Out_attributeCategories
- *   - optionGroups           → Out_optionGroups
- *   - summary                → Out_summary
+ * Properties captured:
+ *   - salesTransactionItems
+ *   - transactionRecord
+ *   - attributeCategories
+ *   - optionGroups
+ *   - summary
  */
 import { LightningElement, api, wire } from 'lwc';
-import { FlowAttributeChangeEvent, FlowNavigationFinishEvent } from 'lightning/flowSupport';
+import { FlowNavigationFinishEvent } from 'lightning/flowSupport';
 import { publish, MessageContext } from 'lightning/messageService';
 import PRODUCT_CONFIGURATOR_RESULT
     from '@salesforce/messageChannel/ProductConfiguratorResult__c';
@@ -33,6 +32,11 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
     // ── LMS wire ────────────────────────────────────────────────────────────
     @wire(MessageContext)
     messageContext;
+
+    // ── Loading state ────────────────────────────────────────────────────────
+    get isLoading() {
+        return !this._salesTransactionItems;
+    }
 
     // ── Private backing fields ──────────────────────────────────────────────
     _salesTransactionItems;
@@ -50,10 +54,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     set salesTransactionItems(value) {
         this._salesTransactionItems = value;
-        this.dispatchEvent(new FlowAttributeChangeEvent('Out_salesTransactionItems', value));
     }
-
-    @api Out_salesTransactionItems;
 
     // ─── transactionRecord ──────────────────────────────────────────────────
 
@@ -64,10 +65,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     set transactionRecord(value) {
         this._transactionRecord = value;
-        this.dispatchEvent(new FlowAttributeChangeEvent('Out_transactionRecord', value));
     }
-
-    @api Out_transactionRecord;
 
     // ─── attributeCategories ────────────────────────────────────────────────
 
@@ -78,10 +76,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     set attributeCategories(value) {
         this._attributeCategories = value;
-        this.dispatchEvent(new FlowAttributeChangeEvent('Out_attributeCategories', value));
     }
-
-    @api Out_attributeCategories;
 
     // ─── optionGroups ───────────────────────────────────────────────────────
 
@@ -92,10 +87,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     set optionGroups(value) {
         this._optionGroups = value;
-        this.dispatchEvent(new FlowAttributeChangeEvent('Out_optionGroups', value));
     }
-
-    @api Out_optionGroups;
 
     // ─── summary ────────────────────────────────────────────────────────────
 
@@ -106,10 +98,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     set summary(value) {
         this._summary = value;
-        this.dispatchEvent(new FlowAttributeChangeEvent('Out_summary', value));
     }
-
-    @api Out_summary;
 
     // ─── Finish handler ─────────────────────────────────────────────────────
 

@@ -41,39 +41,6 @@
                 description="Pricing summary received from the Data Manager."
                 role="inputOnly" />
 
-            <!-- ── OUTPUT properties (populated reactively via FlowAttributeChangeEvent) ── -->
-
-            <property
-                name="Out_salesTransactionItems"
-                type="apex://ProductConfig.SalesTransactionItem[]"
-                label="Out: Sales Transaction Items"
-                description="Collection of SalesTransactionItem records exposed as a flow output variable."
-                role="outputOnly" />
-            <property
-                name="Out_transactionRecord"
-                type="apex://ProductConfig.TransactionRecord"
-                label="Out: Transaction Record"
-                description="Transaction record exposed as a flow output variable."
-                role="outputOnly" />
-            <property
-                name="Out_attributeCategories"
-                type="apex://ProductConfig.AttributeCategory[]"
-                label="Out: Attribute Categories"
-                description="Collection of AttributeCategory records exposed as a flow output variable."
-                role="outputOnly" />
-            <property
-                name="Out_optionGroups"
-                type="apex://ProductConfig.OptionGroup[]"
-                label="Out: Option Groups"
-                description="Collection of OptionGroup records exposed as a flow output variable."
-                role="outputOnly" />
-            <property
-                name="Out_summary"
-                type="apex://ProductConfig.PricingSummary"
-                label="Out: Transaction Summary"
-                description="Pricing summary exposed as a flow output variable."
-                role="outputOnly" />
-
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

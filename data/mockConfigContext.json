@@ -1,22 +1,27 @@
 {
-"transactionLineId" : "ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a",
-"transactionId" : "0Q0d50000012YoDCAU",
-"parentName" : "Quote",
-"origin" : "Quote",
-"explainabilityEnabled" : false,
-"addedNodes" : [ {
-"unitPrice" : 30.0,
-"subscriptionTerm" : 1,
-"sellingModelType" : "Evergreen",
-"quantity" : 1.0,
-"productSellingModel" : "0jPd50000000rAnEAI",
-"productName" : "Fibre Broadband Bronze",
-"productCode" : "CCC_FIBER_BROADBAND_BRONZE",
-"productBasedOn" : "11Bd5000005gs5zEAA",
-"product" : "01td5000004LI9LAAW",
-"pricingTermUnit" : "Months",
-"pricebookEntry" : "01ud5000000Ujz4AAC",
-"id" : "ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a",
-"businessObjectType" : "QuoteLineItem"
-} ]
+  "_comment": "Mock/test data for ProductConfig__ConfiguratorContext. These values were previously hardcoded in categoryAndProductDuplicate.js and are retained here for local testing and reference only. They must NOT be used as fallback values in production code.",
+
+  "transactionId": "0Q0d50000012YoDCAU",
+  "transactionLineId": "ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a",
+  "parentName": "Quote",
+  "origin": "Quote",
+  "explainabilityEnabled": false,
+
+  "addedNodes": [
+    {
+      "product": "01td5000004LI9LAAW",
+      "productName": "Fibre Broadband Bronze",
+      "productCode": "CCC_FIBER_BROADBAND_BRONZE",
+      "unitPrice": 30.0,
+      "quantity": 1.0,
+      "pricebookEntry": "01ud5000000Ujz4AAC",
+      "productSellingModel": "0jPd50000000rAnEAI",
+      "sellingModelType": "Evergreen",
+      "pricingTermUnit": "Months",
+      "subscriptionTerm": 1,
+      "id": "ref_ce62f961_6af6_4f5a_aa81_b890155bcb1a",
+      "productBasedOn": "11Bd5000005gs5zEAA",
+      "businessObjectType": "QuoteLineItem"
+    }
+  ]
 }

@@ -25,39 +25,6 @@
                     </template>
 
                     <!-- PRODUCTS -->
-                    <!-- <template if:true={hasProducts}>
-                    <template for:each={products} for:item="prod">
-                        <div key={prod.productId}
-                            class="slds-box slds-m-around_small slds-grid slds-wrap slds-align_absolute-center">
-
-                            <div class="slds-col slds-size_9-of-12">
-                                <div class="slds-text-heading_small slds-text-title_bold">{prod.productName}</div>
-                                <div class="slds-text-body_small slds-m-top_x-small">{prod.description}</div>
-                                <div class="slds-m-top_x-small"><b>Price:</b> $ {prod.price}</div>
-                                <template if:true={prod.sellingModel}>
-                                    <div><b>Selling Model:</b> {prod.sellingModel}</div>
-                                </template>
-                                <template if:true={prod.displayUrl}>
-                                    <div class="slds-m-top_x-small">
-                                        <a href={prod.displayUrl} target="_blank">View Product Page</a>
-                                    </div>
-                                </template>
-                                <div class="slds-m-top_x-small">
-                                    <lightning-input type="checkbox" label="Select for Quote" data-id={prod.productId}
-                                        checked={prod.selected} onchange={handleSelectCheckbox}>
-                                    </lightning-input>
-                                </div>
-                            </div>
-
-                            <div class="slds-col slds-size_3-of-12 slds-text-align_right">
-                                <lightning-button label="Configure" variant="brand" data-id={prod.productId}
-                                    onclick={handleConfigure}>
-                                </lightning-button>
-                            </div>
-
-                        </div>
-                    </template>
-                </template> -->
                     <template if:true={hasProducts}>
                         <div class="product-container">
                             <template for:each={products} for:item="prod">
@@ -96,14 +63,6 @@
                                                     <b>Selling Model:</b> {prod.sellingModel}
                                                 </div>
                                             </template>
-
-                                            <!-- <template if:true={prod.displayUrl}>
-                                            <div class="meta-text">
-                                                <a href={prod.displayUrl} target="_blank">
-                                                    View Product Page
-                                                </a>
-                                            </div>
-                                        </template> -->
 
                                         </div>
 
@@ -148,17 +107,6 @@
                 <template if:true={showFlow}>
                     <section role="dialog" class="slds-modal slds-fade-in-open slds-modal_large flow-modal">
                         <div class="slds-modal__container flow-modal__container">
-
-                            <!-- HEADER -->
-                            <header class="slds-modal__header">
-                                <lightning-button-icon icon-name="utility:close" class="slds-modal__close"
-                                    onclick={closeFlow}>
-                                </lightning-button-icon>
-
-                                <h2 class="slds-text-heading_medium">
-                                    Product Configuration
-                                </h2>
-                            </header>
 
                             <!-- BODY -->
                             <div class="slds-modal__content slds-p-around_medium flow-modal__body">
