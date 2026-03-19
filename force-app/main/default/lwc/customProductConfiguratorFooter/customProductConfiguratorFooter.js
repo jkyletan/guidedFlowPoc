@@ -56,7 +56,7 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     // ── Loading state ────────────────────────────────────────────────────────
     get isLoading() {
-        return !this._salesTransactionItems;
+        return !this._salesTransactionItems || this._waitingForAutoAttributeResponse;
     }
 
     // ── Private backing fields ──────────────────────────────────────────────
@@ -69,6 +69,14 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     /** Flag to ensure we only fire the auto-attribute update once */
     _hasPublishedAutoAttributes = false;
+
+    /**
+     * Flag that stays true from the moment we publish the auto-attribute
+     * VALUE_CHANGE until the configurator responds by pushing a fresh
+     * attributeCategories update.  Keeps the loading spinner visible so
+     * the user sees the page only after the attribute value is applied.
+     */
+    _waitingForAutoAttributeResponse = false;
 
     /** LMS subscription handle for productConfigurator_notification */
     _configrSubscription = null;
@@ -111,6 +119,19 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
     set attributeCategories(value) {
         console.log('[customProductConfiguratorFooter] attributeCategories SET — value:', JSON.stringify(value));
         this._attributeCategories = value;
+
+        // If we were waiting for the configurator to respond after our
+        // auto-attribute publish, this re-push of attributeCategories means
+        // it has processed the VALUE_CHANGE.  Clear the waiting flag so the
+        // spinner hides and the user sees the updated attribute values.
+        if (this._waitingForAutoAttributeResponse && this._hasPublishedAutoAttributes) {
+            console.log('[customProductConfiguratorFooter] Configurator responded after auto-attribute publish — clearing loading state.');
+            this._waitingForAutoAttributeResponse = false;
+            if (this._autoAttributeTimeout) {
+                clearTimeout(this._autoAttributeTimeout);
+                this._autoAttributeTimeout = null;
+            }
+        }
 
         // attributeCategories may arrive after salesTransactionItems — re-attempt
         if (value) {
@@ -156,6 +177,13 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
 
     connectedCallback() {
         this._subscribeToConfigrChannel();
+    }
+
+    disconnectedCallback() {
+        if (this._autoAttributeTimeout) {
+            clearTimeout(this._autoAttributeTimeout);
+            this._autoAttributeTimeout = null;
+        }
     }
 
     // ─── Subscribe to productConfigurator_notification (debug listener) ─────
@@ -355,13 +383,28 @@ export default class CustomProductConfiguratorFooter extends LightningElement {
                 data: payloads
             }));
 
+            // Keep the loading spinner visible until the configurator responds
+            // with an updated attributeCategories push.
+            this._waitingForAutoAttributeResponse = true;
+
             publish(this.messageContext, CONFIGR_CHANNEL, {
                 action: LMS_EVENTS.VALUE_CHANGE,
                 data: payloads
             });
 
-            console.log('[customProductConfiguratorFooter] ✔ VALUE_CHANGE published successfully.');
+            console.log('[customProductConfiguratorFooter] ✔ VALUE_CHANGE published successfully. Waiting for configurator response...');
             this._hasPublishedAutoAttributes = true;
+
+            // Safety-net: if the configurator never pushes back attributeCategories
+            // (e.g. the event was silently dropped), clear the spinner after 10 s
+            // so the user is not stuck indefinitely.
+            // eslint-disable-next-line @lwc/lwc/no-async-operation
+            this._autoAttributeTimeout = setTimeout(() => {
+                if (this._waitingForAutoAttributeResponse) {
+                    console.warn('[customProductConfiguratorFooter] Timed out waiting for configurator response after auto-attribute publish. Clearing loading state.');
+                    this._waitingForAutoAttributeResponse = false;
+                }
+            }, 10000);
         } else {
             console.warn('[customProductConfiguratorFooter] No valid payloads could be built from the auto-update entries. Nothing published.');
         }

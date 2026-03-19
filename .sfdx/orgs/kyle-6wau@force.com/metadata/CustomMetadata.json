@@ -1,0 +1,109 @@
+{
+  "status": 0,
+  "result": [
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Setup_Page_Map.PermissionSetGroup.md",
+      "fullName": "Setup_Page_Map.PermissionSetGroup",
+      "id": "m00d500000ANDdXAAX",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Setup_Page_Map.Profile.md",
+      "fullName": "Setup_Page_Map.Profile",
+      "id": "m00d500000ANDdYAAX",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/ImportLine_Setting.Default.md",
+      "fullName": "ImportLine_Setting.Default",
+      "id": "m01d500000PQZv4AAH",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Setup_Page_Map.PermissionSet.md",
+      "fullName": "Setup_Page_Map.PermissionSet",
+      "id": "m00d500000ANDdWAAX",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Auto_Attribute_Update.Mesh_Wi_Fi_Premium_Upload_Speed_100.md",
+      "fullName": "Auto_Attribute_Update.Mesh_Wi_Fi_Premium_Upload_Speed_100",
+      "id": "m02d500000z5tDnAAI",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Setup_Page_Map.User.md",
+      "fullName": "Setup_Page_Map.User",
+      "id": "m00d500000ANDdZAAX",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Setup_Page_Map.Network.md",
+      "fullName": "Setup_Page_Map.Network",
+      "id": "m00d500000ANDdVAAX",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    },
+    {
+      "createdById": "005d500000449jxAAA",
+      "createdByName": "Kyle Tan",
+      "createdDate": "1970-01-01T00:00:00.000Z",
+      "fileName": "customMetadata/Auto_Attribute_Update.Platinum_Download_Speed_1000.md",
+      "fullName": "Auto_Attribute_Update.Platinum_Download_Speed_1000",
+      "id": "m02d500000z5uRRAAY",
+      "lastModifiedById": "005d500000449jxAAA",
+      "lastModifiedByName": "Kyle Tan",
+      "lastModifiedDate": "1970-01-01T00:00:00.000Z",
+      "manageableState": "unmanaged",
+      "type": "CustomMetadata"
+    }
+  ]
+}

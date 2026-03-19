@@ -264,13 +264,20 @@ Timeline:
   ↓
   salesTransactionItems SET       (from Data Manager)
     → _attemptAutoAttributePublish() → ✔ all prerequisites met → PUBLISH
+    → _waitingForAutoAttributeResponse = true (spinner stays visible)
   ↓
   VALUE_CHANGE fires → configurator updates attribute
   ↓
   attributeCategories SET again   (configurator re-pushes after update)
+    → _waitingForAutoAttributeResponse = false (spinner hides)
     → _attemptAutoAttributePublish() → skipped (_hasPublishedAutoAttributes = true)
+    → User sees the page with the attribute already set
 ────────────────────────────────────────────────────────
 ```
+
+**Loading spinner behaviour:** The footer's `isLoading` getter returns `true` when **either** `salesTransactionItems` has not yet arrived **or** we are waiting for the configurator to acknowledge the auto-attribute publish (`_waitingForAutoAttributeResponse`). This means the spinner remains visible until the attribute value is fully applied, so the user never sees the un-set attribute flash before being updated.
+
+**Safety-net timeout:** If the configurator does not push back an updated `attributeCategories` within **10 seconds** after publish (e.g. the VALUE_CHANGE was silently dropped), the `_waitingForAutoAttributeResponse` flag is automatically cleared to prevent an infinite spinner. A console warning is logged in this case.
 
 **Guard mechanism:** A `_hasPublishedAutoAttributes` boolean flag ensures the auto-update only fires once, even though `attributeCategories` and `salesTransactionItems` may be set multiple times as the configurator reacts to changes.
 
