@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Platinum Download Speed 1000</label>
+    <protected>false</protected>
+    <values>
+        <field>Attribute_Code__c</field>
+        <value xsi:type="xsd:string">CCC_ATT_DOWNLOAD_SPEED</value>
+    </values>
+    <values>
+        <field>Attribute_Value_Code__c</field>
+        <value xsi:type="xsd:string">CCC_PKLVAL_DOWNLOAD_SPEED_1000</value>
+    </values>
+    <values>
+        <field>Product_Code__c</field>
+        <value xsi:type="xsd:string">CCC_FIBER_BROADBAND_PLATINUM</value>
+    </values>
+    <values>
+        <field>Step__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+</CustomMetadata>

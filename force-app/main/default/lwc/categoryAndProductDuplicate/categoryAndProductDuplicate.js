@@ -7,6 +7,8 @@ import getCategoriesWithProducts
     from '@salesforce/apex/categoryAndProductController.getCategoriesWithProducts';
 import getProductDetails
     from '@salesforce/apex/getMultipleProductDetails.getProductDetails';
+import getAutoAttributeUpdates
+    from '@salesforce/apex/AutoAttributeUpdateController.getAutoAttributeUpdates';
 
 export default class CpqConfigurator extends LightningElement {
 
@@ -54,6 +56,9 @@ export default class CpqConfigurator extends LightningElement {
     /** Data received via LMS from customProductConfiguratorFooter */
     @track lmsReceivedData = null;
     @track showLmsReceivedData = false;
+
+    /** JSON string of auto-attribute updates to pass into the flow */
+    @track autoAttributeUpdatesJSON = null;
 
     get totalSteps() { return this.categories?.length || 0; }
     get currentCategory() {
@@ -152,13 +157,27 @@ export default class CpqConfigurator extends LightningElement {
 
         console.log('[categoryAndProductDuplicate] configuratorContext:', JSON.stringify(configuratorContext));
 
-        return [
+        const inputs = [
             {
                 name: 'configuratorContext',
                 type: 'SObject',
                 value: configuratorContext
             }
         ];
+
+        // ── Pass auto-attribute updates JSON into the flow ───────────────
+        if (this.autoAttributeUpdatesJSON) {
+            inputs.push({
+                name: 'autoAttributeUpdatesJSON',
+                type: 'String',
+                value: this.autoAttributeUpdatesJSON
+            });
+            console.log('[categoryAndProductDuplicate] Adding autoAttributeUpdatesJSON to flow inputs:', this.autoAttributeUpdatesJSON);
+        } else {
+            console.log('[categoryAndProductDuplicate] No autoAttributeUpdatesJSON to pass to flow.');
+        }
+
+        return inputs;
     }
 
     /** Simple UUID v4 generator used for ref_ ids */
@@ -316,7 +335,7 @@ export default class CpqConfigurator extends LightningElement {
         event.stopPropagation();
     }
 
-    handleConfigure(event) {
+    async handleConfigure(event) {
         event.stopPropagation();
         const productId = event.target.dataset.id;
 
@@ -324,6 +343,34 @@ export default class CpqConfigurator extends LightningElement {
         // Save full product details so flowInputVariables can map them
         this.selectedProduct = this.products.find(p => p.productId === productId) || null;
         console.log('[categoryAndProductDuplicate] handleConfigure — selectedProduct:', JSON.stringify(this.selectedProduct));
+
+        // ── Query Auto_Attribute_Update__mdt for this product / step ─────
+        this.autoAttributeUpdatesJSON = null;
+        try {
+            const productCode = this.selectedProduct?.productCode || '';
+            const step = this.currentStep;
+            console.log('[categoryAndProductDuplicate] Querying Auto_Attribute_Update__mdt — productCode:', productCode, ', step:', step);
+
+            const records = await getAutoAttributeUpdates({ productCode, step });
+            console.log('[categoryAndProductDuplicate] Auto attribute update records returned:', JSON.stringify(records));
+
+            if (records && records.length > 0) {
+                const mapped = records.map(r => ({
+                    attributeCode: r.Attribute_Code__c,
+                    attributeValueCode: r.Attribute_Value_Code__c,
+                    productCode: r.Product_Code__c,
+                    step: r.Step__c
+                }));
+                this.autoAttributeUpdatesJSON = JSON.stringify(mapped);
+                console.log('[categoryAndProductDuplicate] autoAttributeUpdatesJSON set:', this.autoAttributeUpdatesJSON);
+            } else {
+                console.log('[categoryAndProductDuplicate] No auto attribute update records found for this product/step.');
+                this.autoAttributeUpdatesJSON = null;
+            }
+        } catch (error) {
+            console.error('[categoryAndProductDuplicate] Error querying Auto_Attribute_Update__mdt:', error);
+            this.autoAttributeUpdatesJSON = null;
+        }
 
         this.capturedDmData = null;
         this.showCapturedData = false;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Code__c</fullName>
+    <label>Product Code</label>
+    <description>The Product Code (Product2.ProductCode) for which this auto-attribute update applies.</description>
+    <type>Text</type>
+    <length>255</length>
+    <required>true</required>
+    <unique>false</unique>
+    <externalId>false</externalId>
+</CustomField>

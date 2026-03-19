@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Attribute_Value_Code__c</fullName>
+    <label>Attribute Value Code</label>
+    <description>The picklist value code for the attribute to auto-populate (e.g. CCC_PKLVAL_DOWNLOAD_SPEED_1000). This code is resolved to a Salesforce picklist value ID at runtime using the attributeCategories data from the Data Manager.</description>
+    <type>Text</type>
+    <length>255</length>
+    <required>true</required>
+    <unique>false</unique>
+    <externalId>false</externalId>
+</CustomField>

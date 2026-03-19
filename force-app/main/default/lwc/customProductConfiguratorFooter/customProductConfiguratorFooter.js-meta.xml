@@ -40,6 +40,12 @@
                 label="Transaction Summary (Input)"
                 description="Pricing summary received from the Data Manager."
                 role="inputOnly" />
+            <property
+                name="autoAttributeUpdatesJSON"
+                type="String"
+                label="Auto Attribute Updates JSON"
+                description="JSON string containing auto-attribute update instructions from custom metadata. Each entry has attributeCode, attributeValue, productCode, and step."
+                role="inputOnly" />
 
         </targetConfig>
     </targetConfigs>

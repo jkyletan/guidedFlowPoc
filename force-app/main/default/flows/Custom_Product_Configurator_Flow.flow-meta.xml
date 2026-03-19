@@ -720,6 +720,12 @@
                     <elementReference>S01_DataManager.summary</elementReference>
                 </value>
             </inputParameters>
+            <inputParameters>
+                <name>autoAttributeUpdatesJSON</name>
+                <value>
+                    <elementReference>autoAttributeUpdatesJSON</elementReference>
+                </value>
+            </inputParameters>
             <inputsOnNextNavToAssocScrn>ResetValues</inputsOnNextNavToAssocScrn>
             <isRequired>true</isRequired>
             <styleProperties>
@@ -750,5 +756,15 @@
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>autoAttributeUpdatesJSON</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
     </variables>
 </Flow>
